@@ -16,6 +16,11 @@
  ******************************************************************************/
 package hr.fer.zemris.vhdllab.applets.texteditor;
 
+import hr.fer.zemris.vhdllab.applets.texteditor.misc.KeywordHighlighterTextPane;
+
+import hr.fer.zemris.vhdllab.applets.texteditor.misc.LineNumbers;
+import hr.fer.zemris.vhdllab.applets.texteditor.misc.ModificationListener;
+
 import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
@@ -27,7 +32,7 @@ import java.io.StringWriter;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JTextPane;
+import javax.swing.JScrollPane;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -44,7 +49,7 @@ import org.springframework.binding.value.CommitTrigger;
 import org.springframework.richclient.application.Application;
 import org.springframework.richclient.text.TextComponentPopup;
 
-public class TextEditor extends AbstractEditor implements DocumentListener, CaretListener {
+public class TextEditor extends AbstractEditor implements CaretListener, ModificationListener {
 
     private CustomJTextPane textPane;
     private CommitTrigger commitTrigger;
@@ -53,10 +58,14 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
 
     @Override
     protected JComponent doInitWithoutData() {
-        textPane = new CustomJTextPane();
+        textPane = new CustomJTextPane(this);
+        wrapInScrollPane = false;
+        
+        JScrollPane jsp = new JScrollPane(textPane);
+        LineNumbers.createInstance(textPane, jsp, 30);
+        
         Document document = textPane.getDocument();
-        document.addDocumentListener(this);
-
+        
         if (document instanceof AbstractDocument) {
             ((AbstractDocument) document).setDocumentFilter(new DocumentFilter() {
 
@@ -83,7 +92,7 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
         commitTrigger = new CommitTrigger();
         TextComponentPopup.attachPopup(textPane, commitTrigger);
 
-        return textPane;
+        return jsp;
     }
 
     @Override
@@ -137,21 +146,10 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
     }
 
     //
-    // DocumentListener implementation
+    // ModificationListener implementation
     //
-
     @Override
-    public void changedUpdate(DocumentEvent e) {
-        setModified(true);
-    }
-
-    @Override
-    public void insertUpdate(DocumentEvent e) {
-        setModified(true);
-    }
-
-    @Override
-    public void removeUpdate(DocumentEvent e) {
+    public void contentModified() {
         setModified(true);
     }
 
@@ -175,17 +173,42 @@ public class TextEditor extends AbstractEditor implements DocumentListener, Care
      * Dodatno, font se postavlja na monospaced sto je uobicajeno
      * za uredivace koda.
      */
-    private static class CustomJTextPane extends JTextPane {
+    private static class CustomJTextPane extends KeywordHighlighterTextPane {
 
 		private static final long serialVersionUID = 1L;
 
 		private static String clipboardText;
+		private ModificationListener modificationListener;
 		
-		public CustomJTextPane() {
+		public CustomJTextPane(ModificationListener modificationListener) {
+			this.modificationListener = modificationListener;
 			Font font = this.getFont();
 			int fontSize = font.getSize();
 			Font newFont = new Font(Font.MONOSPACED, Font.PLAIN, fontSize);
 			this.setFont(newFont);
+			getDocument().addDocumentListener(new DocumentListener() {
+				
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					if(!analysisInProgress && CustomJTextPane.this.modificationListener!=null) {
+						CustomJTextPane.this.modificationListener.contentModified();
+					}
+				}
+				
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					if(!analysisInProgress && CustomJTextPane.this.modificationListener!=null) {
+						CustomJTextPane.this.modificationListener.contentModified();
+					}
+				}
+				
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					if(!analysisInProgress && CustomJTextPane.this.modificationListener!=null) {
+						CustomJTextPane.this.modificationListener.contentModified();
+					}
+				}
+			});
 		}
 		
 		@Override

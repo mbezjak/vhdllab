@@ -229,7 +229,28 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
         // check for duplicate entity block
         while((pos = source.indexOf(ENTITY, pos)) != -1) {
             pos = next(source, ENTITY, pos);
-            if (!source.startsWith(" WORK.", pos)) {
+            if(source.startsWith(WHITESPACE, pos)) {
+            	pos += WHITESPACE.length();
+            	int marker = pos;
+            	while(pos < source.length()) {
+            		char c = source.charAt(pos);
+            		if(Character.isLetter(c) || Character.isDigit(c) || c=='_' || (pos>marker && c=='.')) {
+            			pos++;
+            		} else {
+            			break;
+            		}
+            	}
+            	if(pos-marker<1) { // ako iza entity ne ide identifikator, vozi dalje...
+            		continue;
+            	}
+            	String label = source.substring(marker, pos);
+            	if(label.contains(".")) { // hvata nazive oblika library.sklop, npr. WORK.sklop1
+            		continue; 
+            	}
+            	if(source.startsWith(WHITESPACE, pos)) {
+            		pos += WHITESPACE.length();
+            	}
+            	if(source.startsWith(";", pos)) continue;
                 throwException("Duplicate entity block");
             }
         }
@@ -348,6 +369,7 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
                 continue;
             }
             String component = original.substring(start, pos).toLowerCase();
+            if(component.contains(";")) continue; // ako sam uhvatio "END COMPONENT sklop2;"
             if (!dependencies.contains(component)) {
                 dependencies.add(component);
             }
