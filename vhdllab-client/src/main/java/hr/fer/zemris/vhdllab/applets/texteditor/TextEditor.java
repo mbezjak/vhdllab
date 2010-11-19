@@ -25,18 +25,27 @@ import hr.fer.zemris.vhdllab.entity.File;
 import hr.fer.zemris.vhdllab.platform.manager.editor.impl.AbstractEditor;
 
 import java.awt.Color;
+import java.awt.Event;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -44,15 +53,19 @@ import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.Highlighter;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import javax.swing.undo.UndoManager;
 
-import org.springframework.binding.value.CommitTrigger;
 import org.springframework.richclient.application.Application;
-import org.springframework.richclient.text.TextComponentPopup;
+
+// Pogledaj: http://download.oracle.com/javase/tutorial/uiswing/components/generaltext.html#undo
+// http://spring-rich-c.sourceforge.net/1.1.0/apidocs/org/springframework/binding/value/CommitTrigger.html
 
 public class TextEditor extends AbstractEditor implements CaretListener, ModificationListener {
 
     private CustomJTextPane textPane;
-    private CommitTrigger commitTrigger;
+    //private CommitTrigger commitTrigger;
 
     private Object highlighted;
 
@@ -65,7 +78,7 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
         LineNumbers.createInstance(textPane, jsp, 30);
         
         Document document = textPane.getDocument();
-        
+
         if (document instanceof AbstractDocument) {
             ((AbstractDocument) document).setDocumentFilter(new DocumentFilter() {
 
@@ -89,8 +102,8 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
         }
 
         textPane.addCaretListener(this);
-        commitTrigger = new CommitTrigger();
-        TextComponentPopup.attachPopup(textPane, commitTrigger);
+        // commitTrigger = new CommitTrigger();
+        // TextComponentPopup.attachPopup(textPane, commitTrigger);
 
         return jsp;
     }
@@ -98,7 +111,8 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
     @Override
     protected void doInitWithData(File f) {
         textPane.setText(f.getData());
-        commitTrigger.commit();
+        textPane.resetUndoManager();
+        // commitTrigger.commit();
     }
 
     @Override
@@ -150,7 +164,7 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
     //
     @Override
     public void contentModified() {
-        setModified(true);
+    	setModified(true);
     }
 
     //
@@ -179,6 +193,9 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
 
 		private static String clipboardText;
 		private ModificationListener modificationListener;
+		protected UndoManager undoManager;
+		protected UndoAction undoAction;
+		protected RedoAction redoAction;
 		
 		public CustomJTextPane(ModificationListener modificationListener) {
 			this.modificationListener = modificationListener;
@@ -186,6 +203,26 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
 			int fontSize = font.getSize();
 			Font newFont = new Font(Font.MONOSPACED, Font.PLAIN, fontSize);
 			this.setFont(newFont);
+			
+			undoManager = new UndoManager();
+			undoAction = new UndoAction();
+			redoAction = new RedoAction();
+			
+			InputMap inputMap = getInputMap();
+			KeyStroke undoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK);
+			inputMap.put(undoKeyStroke, undoAction);
+			KeyStroke redoKeyStroke = KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK);
+			inputMap.put(redoKeyStroke, redoAction);
+			
+			getDocument().addUndoableEditListener(new UndoableEditListener() {
+				@Override
+				public void undoableEditHappened(UndoableEditEvent e) {
+					if(analysisInProgress) return;
+					undoManager.addEdit(e.getEdit());
+					undoAction.updateUndoState();
+					redoAction.updateRedoState();
+				}
+			});
 			getDocument().addDocumentListener(new DocumentListener() {
 				
 				@Override
@@ -222,6 +259,12 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
 			setClipboardText(this.getSelectedText());
 			super.cut();
 		}
+
+		public void resetUndoManager() {
+			undoManager.discardAllEdits();
+			undoAction.updateUndoState();
+			redoAction.updateRedoState();
+		}
 		
 		public static synchronized String getClipboardText() {
 			return clipboardText;
@@ -230,5 +273,67 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
 		public static synchronized void setClipboardText(String clipboardText) {
 			CustomJTextPane.clipboardText = clipboardText;
 		}
+		
+	    class UndoAction extends AbstractAction {
+	    	
+			private static final long serialVersionUID = 1L;
+
+			public UndoAction() {
+	            super("Undo");
+	            setEnabled(false);
+	        }
+
+	        public void actionPerformed(ActionEvent e) {
+	            try {
+	                undoManager.undo();
+	            } catch (CannotUndoException ex) {
+	                System.out.println("Unable to undo: " + ex);
+	                ex.printStackTrace();
+	            }
+	            updateUndoState();
+	            redoAction.updateRedoState();
+	        }
+
+	        protected void updateUndoState() {
+	            if (undoManager.canUndo()) {
+	                setEnabled(true);
+	                putValue(Action.NAME, undoManager.getUndoPresentationName());
+	            } else {
+	                setEnabled(false);
+	                putValue(Action.NAME, "Undo");
+	            }
+	        }
+	    }
+
+	    class RedoAction extends AbstractAction {
+	    	
+			private static final long serialVersionUID = 1L;
+			
+	        public RedoAction() {
+	            super("Redo");
+	            setEnabled(false);
+	        }
+
+	        public void actionPerformed(ActionEvent e) {
+	            try {
+	                undoManager.redo();
+	            } catch (CannotRedoException ex) {
+	                System.out.println("Unable to redo: " + ex);
+	                ex.printStackTrace();
+	            }
+	            updateRedoState();
+	            undoAction.updateUndoState();
+	        }
+
+	        protected void updateRedoState() {
+	            if (undoManager.canRedo()) {
+	                setEnabled(true);
+	                putValue(Action.NAME, undoManager.getRedoPresentationName());
+	            } else {
+	                setEnabled(false);
+	                putValue(Action.NAME, "Redo");
+	            }
+	        }
+	    }
     }
 }
