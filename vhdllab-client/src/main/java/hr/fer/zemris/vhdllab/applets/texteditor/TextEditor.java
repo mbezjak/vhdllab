@@ -85,14 +85,28 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
                 @Override
                 public void replace(FilterBypass fb, int offset, int length, String text, AttributeSet attrs)
                         throws BadLocationException {
-                    if (text != null && (text.length() - length) > 10 && !text.equals(CustomJTextPane.getClipboardText())) {
+                    if (text != null && (text.length() - length) > 10 && !text.equals(CustomJTextPane.getClipboardText()) && !textIsBlank(text)) {
                         informPastingIsDisabled();
                     } else {
                         super.replace(fb, offset, length, text, attrs);
                     }
                 }
 
-                private void informPastingIsDisabled() {
+                private boolean textIsBlank(String text) {
+                	if(text==null) return true;
+                	for(char c : text.toCharArray()) {
+                		switch(c) {
+                		case ' ': break;
+                		case '\t': break;
+                		case '\r': break;
+                		case '\n': break;
+                		default: return false;
+                		}
+                	}
+					return true;
+				}
+
+				private void informPastingIsDisabled() {
                     JFrame frame = Application.instance().getActiveWindow().getControl();
                     JOptionPane.showMessageDialog(frame, "Pasting text from outside of vhdllab is disabled!", "Paste text",
                             JOptionPane.INFORMATION_MESSAGE);
@@ -250,13 +264,21 @@ public class TextEditor extends AbstractEditor implements CaretListener, Modific
 		
 		@Override
 		public void copy() {
-			setClipboardText(this.getSelectedText());
+			String selText = this.getSelectedText();
+			if(selText==null || selText.isEmpty()) {
+				return;
+			}
+			setClipboardText(selText);
 			super.copy();
 		}
 		
 		@Override
 		public void cut() {
-			setClipboardText(this.getSelectedText());
+			String selText = this.getSelectedText();
+			if(selText==null || selText.isEmpty()) {
+				return;
+			}
+			setClipboardText(selText);
 			super.cut();
 		}
 
