@@ -1,0 +1,82 @@
+<table>
+<tr>
+<td><img src="image:about.main" border="0" alt=""></td>
+<td valign="top">
+<b>VHDLLab - Web IDE for VHDL</b><br>
+<p>
+Version: ${version}
+<p>
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">&copy; Copyright 2006-2010</a> the original authors.
+<p>
+Send bug reports to <a href="mailto:vhdllab@gmail.com?subject=Bug%20in%20VHDLLab%20Client%20-%20please%20provide%20short%20description%20here">vhdllab@gmail.com</a><br/>
+Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com/group/vhdllab</a><br/>
+Project page: <a href="http://morgoth.zemris.fer.hr/trac/vhdllab">morgoth.zemris.fer.hr/trac/vhdllab</a>
+</td>
+</tr>
+</table>
+<p>
+<center>
+Developers:
+</center>
+<p>
+<table border="1">
+<tr>
+<td><a href="mailto:marko.cupic@fer.hr?subject=About%20VHDLLab">Čupić, Marko</a></td>
+<td>Project lead</td>
+</tr>
+<tr>
+<td><a href="mailto:miro.bezjak@fer.hr?subject=About%20VHDLLab">Bezjak, Miro</a></td>
+<td>
+VHDLLab Server<br/>
+VHDLLab build system<br/>
+VHDLLab Client - all, except for Automaton,<br/>
+Schematic, Simulation and Testbench editor
+</td>
+</tr>
+<tr>
+<td><a href="mailto:davor.delac@fer.hr?subject=About%20VHDLLab">Delač, Davor</a></td>
+<td>
+Automaton editor<br/>
+Schematic editor - canvas
+</td>
+</tr>
+<tr>
+<td><a href="mailto:aleksandar.prokopec@fer.hr?subject=About%20VHDLLab">Prokopec, Aleksandar</a></td>
+<td>Schematic editor - core</td>
+</tr>
+<tr>
+<td><a href="mailto:borislav.ozegovic@fer.hr?subject=About%20VHDLLab">Ožegović, Borislav</a></td>
+<td>Simulations editor</td>
+</tr>
+<tr>
+<td>
+<a href="mailto:ivan.brkic@fer.hr?subject=About%20VHDLLab">Brkić, Ivan</a><br/>
+<a href="mailto:ivan.cesar@fer.hr?subject=About%20VHDLLab">Cesar, Ivan</a><br/>
+<a href="mailto:davor.jurisic@fer.hr?subject=About%20VHDLLab">Jurišić, Davor</a><br/>
+<a href="mailto:ivan.kmetovic@fer.hr?subject=About%20VHDLLab">Kmetović, Ivan</a><br/>
+<a href="mailto:nikola.santic@fer.hr?subject=About%20VHDLLab">Šantić, Nikola</a>
+</td>
+<td>Testbench editor</td>
+</tr>
+<tr>
+<td><a href="mailto:tomislav.rajakovic@fer.hr?subject=About%20VHDLLab">Rajaković, Tomislav</a></td>
+<td>Schematic editor - component properties</td>
+</tr>
+</table>
+<p>
+<table>
+<tr>
+<td><img src="image:about.main" border="0" alt=""></td>
+<td valign="top">
+<b>VHDLLab - Web IDE for VHDL</b><br>
+<p>
+Version: ${version}
+<p>
+<a href="http://www.apache.org/licenses/LICENSE-2.0.txt">&copy; Copyright 2006-2010</a> the original authors.
+<p>
+Send bug reports to <a href="mailto:vhdllab@gmail.com?subject=Bug%20in%20VHDLLab%20Client%20-%20please%20provide%20short%20description%20here">vhdllab@gmail.com</a><br/>
+Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com/group/vhdllab</a><br/>
+Project page: <a href="http://morgoth.zemris.fer.hr/trac/vhdllab">morgoth.zemris.fer.hr/trac/vhdllab</a>
+</td>
+</tr>
+</table>

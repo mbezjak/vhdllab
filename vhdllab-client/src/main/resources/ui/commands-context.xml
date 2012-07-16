@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***************************************************************************
+  See the NOTICE file distributed with this work for additional information
+  regarding copyright ownership.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+**************************************************************************** -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+  <context:annotation-config />
+
+  <bean id="windowCommandManager"
+    class="org.springframework.richclient.application.support.ApplicationWindowCommandManager">
+    <property name="sharedCommandIds">
+      <list>
+        <value>newMenu</value>
+        <value>saveCommand</value>
+        <value>saveAsCommand</value>
+        <value>printCommand</value>
+        <value>propertiesCommand</value>
+        <value>undoCommand</value>
+        <value>redoCommand</value>
+        <value>cutCommand</value>
+        <value>copyCommand</value>
+        <value>pasteCommand</value>
+        <value>deleteCommand</value>
+        <value>selectAllCommand</value>
+        <value>newWindowCommand</value>
+        <value>helpContentsCommand</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="menuBar"
+    class="hr.fer.zemris.vhdllab.platform.support.SelectiveCommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="fileMenu" />
+        <ref bean="editMenu" />
+        <ref bean="toolsMenu" />
+        <ref bean="helpMenu" />
+        <ref bean="developmentMenu" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="fileMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <ref bean="newMenu" />
+        <value>separator</value>
+        <ref bean="saveCommand"/>
+        <ref bean="saveAllCommand"/>
+        <value>separator</value>
+        <ref bean="closeCommand"/>
+        <ref bean="closeOtherCommand"/>
+        <ref bean="closeAllCommand"/>
+        <value>separator</value>
+        <bean
+          class="org.springframework.richclient.command.support.ExitCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="newMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <idref bean="newProjectCommand"/>
+        <value>separator</value>
+        <idref bean="newSourceCommand"/>
+        <idref bean="newTestbenchCommand"/>
+        <idref bean="newSchemaCommand"/>
+        <idref bean="newAutomatonCommand"/>
+      </list>
+    </property>
+  </bean>
+  <bean id="newProjectCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectCommand"/>
+  <bean id="newSourceCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.source.NewSourceCommand"/>
+  <bean id="newTestbenchCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.NewTestbenchCommand"/>
+  <bean id="newSchemaCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.schema.NewSchemaCommand"/>
+  <bean id="newAutomatonCommand" class="hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.NewAutomatonCommand"/>
+
+  <bean id="editMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <value>undoCommand</value>
+        <value>redoCommand</value>
+<!--        <bean id="undoCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.UndoCommand" />-->
+<!--        <bean id="redoCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.RedoCommand" />-->
+<!--        <value>separator</value>-->
+<!--        <value>cutCommand</value>-->
+<!--        <value>copyCommand</value>-->
+<!--        <value>pasteCommand</value>-->
+<!--        <value>deleteCommand</value>-->
+<!--        <value>separator</value>-->
+<!--        <value>selectAllCommand</value>-->
+      </list>
+    </property>
+  </bean>
+
+  <bean id="toolsMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.CompileWithDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.CompileLastCommand" />
+        <value>separator</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateWithDialogCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SimulateLastCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.SaveSimulationCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="helpMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <idref bean="aboutCommand"/>
+        <bean id="bugsCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.BugsCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="developmentMenu"
+    class="org.springframework.richclient.command.CommandGroupFactoryBean">
+    <property name="members">
+      <list>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevCreateNewLoggedErrorCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevCreateUncaughtExceptionCommand" />
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevCreateUncaughtErrorCommand" />
+        <value>separator</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevShowModalDialogCommand" />
+        <value>separator</value>
+        <bean class="hr.fer.zemris.vhdllab.platform.ui.command.DevFloodWithCompliationRequestsCommand" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="saveCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.SaveCommand" />
+  <bean id="saveAllCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.SaveAllCommand" />
+  <bean id="closeCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseCommand" />
+  <bean id="closeOtherCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseOtherCommand" />
+  <bean id="closeAllCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.CloseAllCommand" />
+
+  <bean id="aboutCommand"
+    class="hr.fer.zemris.vhdllab.platform.ui.about.AboutCommand">
+    <property name="aboutTextPath" value="ui/about.txt"/>
+  </bean>
+
+  <bean id="loginCommand" class="hr.fer.zemris.vhdllab.platform.remoting.LoginCommand" />
+  <bean id="welcomeCommand" class="hr.fer.zemris.vhdllab.platform.ui.command.WelcomeCommand" />
+
+</beans>

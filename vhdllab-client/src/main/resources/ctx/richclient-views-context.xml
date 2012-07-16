@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***************************************************************************
+  See the NOTICE file distributed with this work for additional information
+  regarding copyright ownership.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+**************************************************************************** -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+  <alias name="multiViewPageDescriptor" alias="initialPage" />
+
+  <bean id="multiViewPageDescriptor"
+    class="org.springframework.richclient.application.support.MultiViewPageDescriptor">
+    <property name="viewDescriptors">
+      <list>
+        <idref bean="tabbedEditorsView" />
+        <idref bean="projectExplorerView" />
+        <idref bean="logHistoryView" />
+        <idref bean="compilationErrorsView" />
+        <idref bean="simulationErrorsView" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="tabbedEditorsView"
+    class="org.springframework.richclient.application.support.LookupViewDescriptor">
+    <property name="viewPrototypeBeanName">
+      <idref bean="tabbedEditorsViewPrototype" />
+    </property>
+  </bean>
+
+  <bean id="tabbedEditorsViewPrototype" class="hr.fer.zemris.vhdllab.view.TabbedEditorsView"
+    scope="prototype" />
+
+  <bean id="logHistoryView"
+    class="org.springframework.richclient.application.support.LookupViewDescriptor">
+    <property name="viewPrototypeBeanName">
+      <idref bean="logHistoryViewPrototype" />
+    </property>
+  </bean>
+
+  <bean id="logHistoryViewPrototype" class="hr.fer.zemris.vhdllab.view.LogHistoryView"
+    scope="prototype" />
+
+  <bean id="projectExplorerView"
+    class="org.springframework.richclient.application.support.LookupViewDescriptor">
+    <property name="viewPrototypeBeanName">
+      <idref bean="projectExplorerViewPrototype" />
+    </property>
+  </bean>
+
+  <bean id="projectExplorerViewPrototype"
+    class="hr.fer.zemris.vhdllab.view.explorer.ProjectExplorerView"
+    scope="prototype" />
+
+  <bean id="compilationErrorsView"
+    class="org.springframework.richclient.application.support.LookupViewDescriptor">
+    <property name="viewPrototypeBeanName">
+      <idref bean="compilationErrorsViewPrototype" />
+    </property>
+  </bean>
+
+  <bean id="compilationErrorsViewPrototype"
+    class="hr.fer.zemris.vhdllab.applets.view.compilation.CompilationErrorsView"
+    scope="prototype" />
+
+  <bean id="simulationErrorsView"
+    class="org.springframework.richclient.application.support.LookupViewDescriptor">
+    <property name="viewPrototypeBeanName">
+      <idref bean="simulationErrorsViewPrototype" />
+    </property>
+  </bean>
+
+  <bean id="simulationErrorsViewPrototype"
+    class="hr.fer.zemris.vhdllab.applets.view.simulation.SimulationErrorsView"
+    scope="prototype" />
+
+</beans>

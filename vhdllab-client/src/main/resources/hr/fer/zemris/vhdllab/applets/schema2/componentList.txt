@@ -1,0 +1,141 @@
+#-------------------------------------------------------------------------------
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#-------------------------------------------------------------------------------
+OVO JE REVIEW - OVO GLEDAJTE!!!
+Promaklo mi je par stvari.
+
+
+Ovaj dokument se odnosi na oblik xml zapisa za predefinirane komponente.
+Datoteka koja je u tom obliku nalazi se na serveru.
+
+Za svaku komponentu trebaju biti navedene sljedece stavke:
+
+<componentName/> <!-- ime komponente - mora biti JEDINSTVENO!!! -->
+<codeFileName/>   <!-- ime datoteke u kojoj je datoteka opisana u VHDLu -->
+<IDrawerName/>    <!-- ime drawera, ako je ispusteno, uzima se DefaultDrawer -->
+<categoryName/>   <!-- ime kategorije u kojoj ce se naci sklop -->
+<preferredName/>  <!-- preferirano ime instance komponente -->
+<isComponentGeneric/> <!-- da li je komponenta genericka - da li ce imati GENERIC MAP kad se bude instancirala -->
+
+
+<parameterlist>
+   <parameter>
+      <isGeneric/> <!-- moze biti true ili false - odreduje da li je ovaj parametar dio GENERIC bloka u sucelju (true znaci da ce se koristiti u GENERIC MAP) -->
+      <type/>         <!-- moze biti INTEGER, BOOLEAN, DECIMAL, TEXT, TIME -->
+      <name/>       <!-- ime parametra - MORA biti jedinstveno za ovu komponentu -->
+      <value/>       <!-- inicijalna vrijednost - string u formatu koji IParameter moze isparsirati (za sve tipove koji su gore navedeni pod <type/> ovo vrijedi) -->
+      <allowedValueSet>
+          <!-- ako je skup dozvoljenih vrijednosti konacan onda se ovdje moraju navesti vrijednosti koje su dozvoljene -->
+          <!-- ako skup dozvoljenih vrijednosti nije konacan, prihvacat ce se sve vrijednosti, i tada tu treba navesti apsolutno nista (praznine) -->
+      </allowedValueSet>
+   </parameter>
+   <!-- ponavljaj zadnji tag kolko god puta zelis -->
+</parameterlist>
+
+<portlist>
+   <port>
+      <portName/>      <!-- ime porta kako je napisano u entity bloku VHDL opisa komponente (koji se negdje drugdje nalazi) -->
+      <orientation/>     <!-- odreduje s koje strane sklopa ce se port naci - NORTH, SOUTH, WEST, EAST -->
+      <direction/>        <!-- IN ili OUT -->
+      <type/>              <!-- std_logic ili std_logic_vector -->
+      <vector-ascension/>    <!-- ascend ili descend -->
+      <lower-bound/>           <!-- ovdje ide formula := ime_parametra operator ime_parametra operator ime_parametra (zasad samo tri varijable u nizu) -->
+      <upper-bound/>           <!-- ovdje ide isto tako formula, operator := + - * / ili ^ (potenciranje) -->
+   </port>
+   <!-- ponavljaj zadnji tag kolko god puta zelis -->
+</portlist>
+
+
+
+Sve gore navedeno se nalazi u opisu pojedine komponente ( u daljnjem tekstu OVO_GORE ).
+Kostur citave xml datoteke:
+
+
+<componentlist>
+   <component>
+      OVO_GORE
+   </component>
+   <!-- ponavljaj zadnji tag kolko god puta zelis -->
+</componentlist>
+
+
+
+Primjer citave datoteke (s jednom definiranom komponentom, tj. sklopom):
+
+<componentlist>
+   <component>
+
+
+
+        <componentName>AND_gate</componentName>
+        <codeFileName>AND_gate.vhdl</codeFileName>
+        <IDrawerName>hr.fer.zemris.vhdllab.onClient.applets.schema2.gui.drawing.AND_Drawer</IDrawerName>
+        <categoryName>BasicGates</categoryName>
+        <preferredName>AND_gate_instance</preferredName>
+        <isComponentGeneric>true</isComponentGeneric>
+
+
+        <parameterlist>
+           <parameter>
+              <isGeneric>true</isGeneric>
+              <type>TIME</type>
+              <name>delay</name>
+              <value>0 ns</value>
+              <allowedValueSet>
+              </allowedValueSet>
+           </parameter>
+
+           <parameter>
+              <isGeneric>true</isGeneric>
+              <type>INTEGER</type>
+              <name>input_port_num</name>
+              <value>2</value>
+              <allowedValueSet>
+              </allowedValueSet>
+           </parameter>
+
+        </parameterlist>
+       
+        <portlist>
+           <port>
+              <portName>input_ports</portName>
+              <orientation>WEST</orientation>
+              <direction>IN</direction>
+              <type>std_logic_vector</type>
+              <vector-ascension>ascend</vector-ascension>
+              <lower-bound>0</lower-bound>
+              <upper-bound>input_port_num</upper-bound>
+           </port>
+
+           <port>
+              <portName>output_port</portName>
+              <orientation>EAST</orientation>
+              <direction>OUT</direction>
+              <type>std_logic</type>
+           </port>
+
+        </portlist>
+
+
+
+   </component>
+</componentlist>
+
+
+To je sve sto mi zasad pada na pamet.
+
+
+

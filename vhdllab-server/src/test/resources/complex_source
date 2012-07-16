@@ -1,0 +1,19 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY complex_source IS PORT (
+	a : IN Std_Logic;
+	b : IN Std_Logic;
+	c : IN Std_Logic;
+	f : OUT Std_Logic);
+end complex_source;
+
+ARCHITECTURE arch OF complex_source IS
+SIGNAL sig: std_logic;
+
+BEGIN
+
+u1: entity work.comp_and PORT MAP (a, b, sig);
+u2: entity work.comp_and PORT MAP (c, sig, f);
+
+END arch;

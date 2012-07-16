@@ -1,0 +1,16 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+ENTITY comp_and IS PORT (
+	a : IN Std_Logic;
+	b : IN Std_Logic;
+	f : OUT Std_Logic);
+end comp_and;
+
+ARCHITECTURE arch OF comp_and IS 
+
+BEGIN
+
+f <= a and b;
+
+END arch;

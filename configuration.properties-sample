@@ -1,0 +1,73 @@
+#-------------------------------------------------------------------------------
+# See the NOTICE file distributed with this work for additional information
+# regarding copyright ownership.
+# 
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+# 
+#   http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#-------------------------------------------------------------------------------
+app.host = localhost
+# servlet context under which an application will reside
+app.context=vhdllab
+http.port=8080
+https.port=8443
+
+###############################################################################
+### GHDL parameters                                                         ###
+###############################################################################
+# This parameter is optional and controls where compilation and simulation
+# data will be placed. If it isn't set then java.io.tmpdir will be used.
+#ghdl.tmp.dir=/tmp/vhdllab
+
+# {files} argument will be replaced with actual list of files that needs to be
+# compiled/simulated.
+# 
+# In ghdl.simulation.cmd additional properties will be appended as run
+# options, i.e., --vcd and --stop-time. Former controls file name that should
+# be parsed for results and latter is only available as a runtime parameter
+# (depends upon testbench data). Do not use those options in your
+# ghdl.simulation.cmd!
+#
+# Note: only use absolute paths to ghdl executable (e.g. /usr/bin/ghdl or
+# C:/ghdl/bin/ghdl.exe)
+
+# Linux variant
+ghdl.compilation.cmd=/usr/bin/ghdl -a -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32 {files}
+ghdl.simulation.cmd=/usr/bin/ghdl --elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,-m32 {files} --stop-delta=1000
+
+# Windows variant
+#ghdl.compilation.cmd=C:/ghdl/bin/ghdl.exe -a {files}
+#ghdl.simulation.cmd=C:/ghdl/bin/ghdl.exe --elab-run {files} --stop-delta=1000
+
+###############################################################################
+### Keystore parameters                                                     ###
+###############################################################################
+# Since keystore is used both for SSL and for signing vhdllab-client
+# application it is imperative you use different keystore then one provided in
+# vhdllab-war/src/dev/devel-keystore. That keystore is very weak an should be
+# used only during development process.
+#
+# Note: keystore location is relative to vhdllab-war directory. If you prefer
+# you can use absolute path.
+keystore.location=src/dev/devel-keystore
+# expired-keystore is used to test how vhdllab-client handles situations when
+# keystore has expired on server
+#keystore.location = src/dev/expired-keystore
+keystore.alias=vhdllab
+keystore.password=vhdllab
+keystore.keypassword=vhdllab
+
+###############################################################################
+### Database parameters                                                     ###
+###############################################################################
+database.connection.url=jdbc:mysql://localhost:3306/vhdllab
+database.connection.username=username
+database.connection.password=password

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***************************************************************************
+  See the NOTICE file distributed with this work for additional information
+  regarding copyright ownership.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+**************************************************************************** -->
+<Help>
+	<HelpGroup groupName="VHDL Lab" groupPage="start.html" helpCode="ROOT">
+		<HelpGroup groupName="Testbench" groupPage="testbenchGroup.html" helpCode="TB-G">
+			<HelpItem topicName="Initialize Timing Dialog" helpPage="initTiming.html" helpCode="TB-INITTIM" />
+			<HelpItem topicName="Waveform Editor" helpPage="waveformEditor.html" helpCode="TB-WAVEEDIT" />
+			<HelpGroup groupName="Pattern Wizards" groupPage="patternWizardsGroup.html" helpCode="TB-PAT-G">
+				<HelpGroup groupName="Scalar Patterns" groupPage="blank.html" helpCode="TB-PAT-SC-G">
+					<HelpItem topicName="Pulse Pattern" helpPage="pulsePattern.html" helpCode="TB-PAT-SC-PUL" />
+					<HelpItem topicName="Random Pattern" helpPage="randomPatternScalar.html" helpCode="TB-PAT-SC-RND" />
+					<HelpItem topicName="Toggle Pattern" helpPage="togglePattern.html" helpCode="TB-PAT-SC-TOG" />
+				</HelpGroup>
+				<HelpGroup groupName="Vector Patterns" groupPage="blank.html" helpCode="TB-PAT-VE-G">
+					<HelpItem topicName="Alternate Pattern" helpPage="alternatePattern.html" helpCode="TB-PAT-VE-ALT" />
+					<HelpItem topicName="Count Pattern" helpPage="countPattern.html" helpCode="TB-PAT-VE-CNT" />
+					<HelpItem topicName="Shift Left Pattern" helpPage="shiftLeftPattern.html" helpCode="TB-PAT-VE-SHL" />
+					<HelpItem topicName="Shift Right Pattern" helpPage="shiftRightPattern.html" helpCode="TB-PAT-VE-SHR" />
+					<HelpItem topicName="Random Pattern" helpPage="randomPatternVector.html" helpCode="TB-PAT-VE-RND" />
+				</HelpGroup>
+			</HelpGroup>
+			<HelpItem topicName="Authors" helpPage="authors.html" helpCode="AUTHORS" />
+		</HelpGroup>
+	</HelpGroup>
+	<!-- <HelpGroup groupName="" groupPage="" helpCode=""></HelpGroup> -->
+	<!-- <HelpItem topicName="" helpPage="" helpCode=""></HelpItem>  -->
+</Help>

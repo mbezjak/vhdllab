@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***************************************************************************
+  See the NOTICE file distributed with this work for additional information
+  regarding copyright ownership.
+  
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+**************************************************************************** -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:security="http://www.springframework.org/schema/security"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+  
+  <context:property-placeholder location="/WEB-INF/database.properties"/>
+
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+    <property name="url" value="${datasource.url}" />
+    <property name="username" value="${datasource.username}" />
+    <property name="password" value="${datasource.password}" />
+
+    <property name="initialSize" value="2" />
+    <property name="maxActive" value="20" />
+    <property name="maxIdle" value="8" />
+    <property name="maxWait" value="5000" />
+    <property name="testOnBorrow" value="true" />
+    <property name="testOnReturn" value="false" />
+    <property name="validationQuery" value="SELECT 1" /> <!-- MySQL valid -->
+    <property name="poolPreparedStatements" value="true" />
+    <property name="maxOpenPreparedStatements" value="20" />
+  </bean>
+
+  <bean id="entityManagerFactory"
+    class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+    <property name="jpaVendorAdapter">
+      <bean
+        class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="database" value="MYSQL" />
+        <property name="showSql" value="false" />
+      </bean>
+    </property>
+    <property name="jpaProperties">
+      <props>
+        <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+        <prop key="hibernate.cache.use_second_level_cache">true</prop>
+        <prop key="hibernate.cache.use_query_cache">true</prop>
+        <prop key="hibernate.hbm2ddl.auto">update</prop>
+      </props>
+    </property>
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+    <property name="entityManagerFactory" ref="entityManagerFactory" />
+  </bean>
+
+  <context:annotation-config />
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  <aop:aspectj-autoproxy />
+
+  <!-- Injects entityManagerFactory to HistoryListener so history can be created -->
+<!--  <bean class="hr.fer.zemris.vhdllab.entity.HistoryListenerConfigurer" />-->
+
+  <!-- DAO classes -->
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.PreferencesFileDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
+    autowire="autodetect" />
+
+  <bean class="hr.fer.zemris.vhdllab.dao.impl.PredefinedFileDaoImpl"
+    autowire="autodetect" />
+
+  <!-- Service classes -->
+  <bean id="workspaceService" class="hr.fer.zemris.vhdllab.service.impl.WorkspaceServiceImpl" />
+  <bean id="preferencesFileService" class="hr.fer.zemris.vhdllab.service.impl.PreferencesFileServiceImpl" />
+  <bean id="clientLogService" class="hr.fer.zemris.vhdllab.service.impl.ClientLogServiceImpl" />
+  <bean id="metadataExtractionService" class="hr.fer.zemris.vhdllab.service.impl.MetadataExtractionServiceImpl" />
+  <bean id="simulator" class="hr.fer.zemris.vhdllab.service.impl.GhdlSimulator" />
+
+  
+  <!-- Aspects -->
+  <bean class="hr.fer.zemris.vhdllab.service.aspect.EntitySecurityAspect" />
+  <bean class="hr.fer.zemris.vhdllab.service.aspect.LogAspect" />
+
+  
+  
+  <bean id="httpWorkspaceService"
+        class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="workspaceService"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.WorkspaceService</value>
+    </property>
+  </bean>
+  
+  <bean id="httpPreferencesFileService"
+        class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="preferencesFileService"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.PreferencesFileService</value>
+    </property>
+  </bean>
+  
+  <bean id="httpClientLogService"
+        class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="clientLogService"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.ClientLogService</value>
+    </property>
+  </bean>
+  
+  <bean id="httpMetadataExtractionService"
+        class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="metadataExtractionService"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.MetadataExtractionService</value>
+    </property>
+  </bean>
+  
+  <bean id="httpSimulator"
+        class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
+    <property name="service">
+      <ref bean="simulator"/>
+    </property>
+    <property name="serviceInterface">
+      <value>hr.fer.zemris.vhdllab.service.Simulator</value>
+    </property>
+  </bean>
+  
+  <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+    <property name="mappings">
+      <props>
+        <prop key="/workspace.service">httpWorkspaceService</prop>
+        <prop key="/preferencesfile.service">httpPreferencesFileService</prop>
+        <prop key="/clientlog.service">httpClientLogService</prop>
+        <prop key="/metadataextraction.service">httpMetadataExtractionService</prop>
+        <prop key="/simulator.service">httpSimulator</prop>
+      </props>
+    </property>
+  </bean>
+  
+  
+  
+  
+  
+  
+  <bean id="fileTypeBasedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.FileTypeBasedMetadataExtractor" />
+  <bean id="sourceMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.source.SourceMetadataExtractor" />
+  <bean id="schemaMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.schema.SchemaMetadataExtractor" />
+  <bean id="automatonMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.automaton.AutomatonMetadataExtractor" />
+  <bean id="testbenchMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.testbench.TestbenchMetadataExtractor" />
+  <bean id="predefinedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.predefined.PredefinedMetadataExtractor" />
+  <bean id="simulationMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.simulation.SimulationMetadataExtractor" />
+  
+ 
+  
+  
+  
+  <security:authentication-manager alias="authenticationManager"/>
+<!--  <security:authentication-provider>-->
+<!--    <security:user-service>-->
+<!--      <security:user password="test" name="test" authorities="ROLE_STUDENT"/>-->
+<!--      <security:user password="admin" name="admin" authorities="ROLE_ADMIN"/>-->
+<!--    </security:user-service>-->
+<!--  </security:authentication-provider>-->
+  <security:http create-session="always" entry-point-ref="preAuthenticatedProcessingFilterEntryPoint">
+    <security:intercept-url pattern="/remoting/*" access="ROLE_STUDENT,ROLE_ADMIN,ROLE_N_OSOBLJE" requires-channel="https"/>
+<!--    <security:http-basic/>-->
+  </security:http>
+
+    <bean id="preAuthenticatedAuthenticationProvider" class="org.springframework.security.providers.preauth.PreAuthenticatedAuthenticationProvider">
+        <security:custom-authentication-provider />
+        <property name="preAuthenticatedUserDetailsService" ref="preAuthenticatedUserDetailsService"/>
+    </bean>
+
+    <bean id="preAuthenticatedUserDetailsService"
+            class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService"/>
+            
+    <bean id="j2eePreAuthFilter" class="org.springframework.security.ui.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
+        <security:custom-filter position="PRE_AUTH_FILTER" />
+        <property name="authenticationManager" ref="authenticationManager"/>
+        <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
+    </bean>
+    
+    <bean id="preAuthenticatedProcessingFilterEntryPoint"
+            class="org.springframework.security.ui.preauth.PreAuthenticatedProcessingFilterEntryPoint"/>
+
+    <bean id="authenticationDetailsSource" class="org.springframework.security.ui.preauth.j2ee.J2eeBasedPreAuthenticatedWebAuthenticationDetailsSource">
+        <property name="mappableRolesRetriever" ref="j2eeMappableRolesRetriever"/>
+        <property name="userRoles2GrantedAuthoritiesMapper" ref="j2eeUserRoles2GrantedAuthoritiesMapper"/>
+    </bean>
+
+    <bean id="j2eeUserRoles2GrantedAuthoritiesMapper" class="org.springframework.security.authoritymapping.SimpleAttributes2GrantedAuthoritiesMapper">
+        <property name="convertAttributeToUpperCase" value="true"/>
+    </bean>
+
+    <bean id="j2eeMappableRolesRetriever" class="org.springframework.security.ui.preauth.j2ee.WebXmlMappableAttributesRetriever">
+        <property name="webXmlInputStream">
+            <bean factory-bean="webXmlResource" factory-method="getInputStream"/>
+        </property>
+    </bean>
+
+    <bean id="webXmlResource" class="org.springframework.web.context.support.ServletContextResource">
+        <constructor-arg ref="servletContext"/>
+        <constructor-arg value="/WEB-INF/web.xml"/>
+    </bean>
+
+    <bean id="servletContext" class="org.springframework.web.context.support.ServletContextFactoryBean"/>
+
+
+
+
+
+
+
+
+
+
+</beans>

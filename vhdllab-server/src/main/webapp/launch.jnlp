@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="6.0+" codebase="http://${app.host}:${http.port}/${app.context}/"
+            href="$$name" version="${application.version}">
+
+    <information>
+        <title>VHDLLab2</title>
+        <vendor>FER Java team, University of Zagreb, Croatia</vendor>
+        <homepage href="http://morgoth.zemris.fer.hr/trac/vhdllab" />
+        <description kind="one-line">A web based IDE for VHDL.</description>
+        <description kind="tooltip">A web based IDE for VHDL.</description>
+        <description kind="short">A cross-platform web based IDE for VHDL programming language.</description>
+
+        <shortcut online="true">
+            <desktop/>
+            <menu submenu="VHDLLab2"/>
+        </shortcut>
+    </information>
+
+    <update check="always" policy="always" />
+    <security>
+      <all-permissions/>
+    </security>
+
+    <resources>
+        <property name="jnlp.packEnabled" value="true"/>
+        <java version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+        <jar href="vhdllab-client-with-deps.jar" download="eager" main="true"/>
+    </resources>
+
+    <application-desc>
+       <argument>--env=prod</argument>
+    </application-desc>
+
+</jnlp>
