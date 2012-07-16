@@ -1,8 +1,0 @@
-Miro Bezjak, Davor Delač, Aleksandar Prokopec, VHDLLab, Educational software for modelling and simulation of digital circuits
-
-This paper describes the VHDLLab system used for modelling and simulation of digital circuits. This system is used on Bologna studies on the Faculty of Electrotechnics and Computer Science in Zagreb. The system is made according to goals and aspirations of the Bologna process, such as upgrading the quality of education. It is applicable to the field of digital elecronics and digital logic. It is devised to soften the learning curve of students who are being introduced to topics such as digital circuit, modelling and simulation.
-VHDLLab system has been successfully applied to the course Digital logic on the first semester of the Bologne study of Faculty of Electrotechnics and Computer Science (academic year 2007./2008.). Impressions and experiences of students who used this system have been described within this paper. The quality of the system is best described by their positive critics.
-The system has been made in layers abiding the commonly accepted programming models and architectures, and is therefore completely expandable with new abilities and compatible with existing systems. This allows expansions in future, as well as the possibility of use on other courses.
-
-
-Keywords: VHDL, IDE, simulation, modelling, digital circuit
