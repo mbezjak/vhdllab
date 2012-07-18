@@ -26,6 +26,19 @@ VHDLLab is being used at Faculty of Electrical Engineering and Computing,
 University of Zagreb, Croatia in *Digital Electronics* course since 2007. Every
 year approximately 700 students use it to complete programming assignments.
 
+## Award
+A paper describing VHDLLab, authored by Miro Bezjak, Davor Delač and Aleksandar
+Prokopec under supervision of Mr.sc. Marko Čupić (now Dr.sc.), was among the
+[winners] [ra-source] of University of Zagreb's Rector's Award in academic year
+2007/2008. Paper is [available] [ra-paper] online as a PDF in Croatian. Paper
+summary is available both in [Croatian] [ra-sum-hr] and in
+[English] [ra-sum-en].
+
+  [ra-source] : http://www.unizg.hr/fileadmin/rektorat/dokumenti/rektnagrade/Rektorova_nagrada_2007-2008.pdf
+  [ra-paper]  : http://java.zemris.fer.hr/rektor/vhdllab/vhdllab-rad.pdf
+  [ra-sum-hr] : http://java.zemris.fer.hr/rektor/vhdllab/sazetak.html
+  [ra-sum-en] : http://java.zemris.fer.hr/rektor/vhdllab/summary.html
+
 ## Features
 TBW
 
