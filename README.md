@@ -34,10 +34,10 @@ Prokopec under supervision of Mr.sc. Marko Čupić (now Dr.sc.), was among the
 summary is available both in [Croatian] [ra-sum-hr] and in
 [English] [ra-sum-en].
 
-[ra-source] : http://www.unizg.hr/fileadmin/rektorat/dokumenti/rektnagrade/Rektorova_nagrada_2007-2008.pdf
-[ra-paper]  : http://java.zemris.fer.hr/rektor/vhdllab/vhdllab-rad.pdf
-[ra-sum-hr] : http://java.zemris.fer.hr/rektor/vhdllab/sazetak.html
-[ra-sum-en] : http://java.zemris.fer.hr/rektor/vhdllab/summary.html
+[ra-source]: http://www.unizg.hr/fileadmin/rektorat/dokumenti/rektnagrade/Rektorova_nagrada_2007-2008.pdf
+[ra-paper]:  http://java.zemris.fer.hr/rektor/vhdllab/vhdllab-rad.pdf
+[ra-sum-hr]: http://java.zemris.fer.hr/rektor/vhdllab/sazetak.html
+[ra-sum-en]: http://java.zemris.fer.hr/rektor/vhdllab/summary.html
 
 ## Features
 TBW
