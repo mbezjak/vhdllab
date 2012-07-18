@@ -29,6 +29,9 @@ year approximately 700 students use it to complete programming assignments.
 ## Features
 TBW
 
+## Limitations
+TBW
+
 ## Requirements
 TBW
 
@@ -39,9 +42,6 @@ TBW
 TBW
 
 ## Development documentation
-TBW
-
-### Limitations
 TBW
 
 ## Source code
