@@ -21,7 +21,7 @@ unnecessary features that distracts students, lots of bugs, huge footprint, etc.
 VHDLLab was designed as a lightweight alternative to fix those problems as well
 as add a few other niceties.
 
-## Testimonials
+## Tried & Tested
 VHDLLab is being used at Faculty of Electrical Engineering and Computing,
 University of Zagreb, Croatia in *Digital Electronics* course since 2007. Every
 year approximately 700 students use it to complete programming assignments.
