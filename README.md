@@ -43,7 +43,8 @@ summary is available both in [Croatian] [ra-sum-hr] and in
 TBW
 
 ## Limitations
-TBW
+VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
+are missing. It has enough features to be useful in educational setting.
 
 ## Requirements
 TBW
