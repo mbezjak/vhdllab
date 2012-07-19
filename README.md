@@ -12,10 +12,10 @@ For the impatient: https://github.com/mbezjak/vhdllab/wiki/Screenshots
 ## Rationale
 The need for VHDLLab appeared at Faculty of Electrical Engineering and
 Computing, University of Zagreb, Croatia where VHDL was taught in *Digital
-Electronics* course. At the time (2006), [WebISE](http://www.xilinx.com) was
-used by students for VHDL programming. However, WebISE had a couple of problems
-when used for educational purposes. One of the big ones was licensing that
-forbade universities from distributing WebISE to students for work at home.
+Electronics* course. At the time (2006), [Xilinx WebISE](http://www.xilinx.com)
+was used by students for VHDL programming. However, WebISE had a couple of
+problems when used for educational purposes. One of the big ones was licensing
+that forbade universities from distributing WebISE to students for work at home.
 Other problems included: inability to describe circuits as automatons, lots of
 unnecessary features that distracts students, lots of bugs, huge footprint, etc.
 VHDLLab was designed as a lightweight alternative to fix those problems as well
@@ -47,7 +47,17 @@ VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
 are missing. It has enough features to be useful in educational setting.
 
 ## Requirements
-TBW
+Client side is expected to have [JRE](http://java.com) 6+ and connectivity to
+VHDLLab server. That is about it.
+
+Server side requirements are as follows:
+
+ * JRE 6+
+ * [Apache Tomcat](http://tomcat.apache.org) 6+
+ * [MySQL](http://www.mysql.com) 5+
+ * [GHDL](http://ghdl.free.fr) 0.29+ for VHDL compilation and simulation
+
+Building VHDLLab requires JDK 6+ and [maven](http://maven.apache.org) 2.1.0.
 
 ## Install
 TBW
