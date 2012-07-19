@@ -46,6 +46,10 @@ TBW
 VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
 are missing. It has enough features to be useful in educational setting.
 
+## Statistics
+[cloc](http://cloc.sourceforge.net) reports roughly 600 Java files, 45,000
+lines of code + 20,000 lines of comments + 13,000 blank lines.
+
 ## Requirements
 Client side is expected to have [JRE](http://java.com) 6+ and connectivity to
 VHDLLab server. That is about it.
@@ -57,7 +61,7 @@ Server side requirements are as follows:
  * [MySQL](http://www.mysql.com) 5+
  * [GHDL](http://ghdl.free.fr) 0.29+ for VHDL compilation and simulation
 
-Building VHDLLab requires JDK 6+ and [maven](http://maven.apache.org) 2.1.0.
+Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.1.0.
 
 ## Install
 TBW
