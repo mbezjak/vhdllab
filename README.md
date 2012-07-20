@@ -16,10 +16,10 @@ Electronics* course. At the time (2006), [Xilinx WebISE](http://www.xilinx.com)
 was used by students for VHDL programming. However, WebISE had a couple of
 problems when used for educational purposes. One of the big ones was licensing
 that forbade universities from distributing WebISE to students for work at home.
-Other problems included: inability to describe circuits as automatons, lots of
-unnecessary features that distracts students, lots of bugs, huge footprint, etc.
-VHDLLab was designed as a lightweight alternative to fix those problems as well
-as add a few other niceties.
+Other problems included: inability to describe circuits using automatons, lots
+of unnecessary features that distracts students, lots of bugs, huge footprint,
+etc. VHDLLab was designed as a lightweight alternative to fix those problems as
+well as add a few other niceties.
 
 ## Tried & Tested
 VHDLLab is being used at Faculty of Electrical Engineering and Computing,
