@@ -79,4 +79,5 @@ Source code is available at github: https://github.com/mbezjak/vhdllab
 Additional documentation is available at: https://github.com/mbezjak/vhdllab/wiki
 
 ## License
-Project uses Apache license version 2.0. Check LICENSE file for more info.
+Project uses Apache license version 2.0. Check LICENSE and NOTICE files for
+more info.
