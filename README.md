@@ -46,11 +46,29 @@ TBW
 VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
 are missing. It has enough features to be useful in educational setting.
 
-## Statistics
+## Install
+TBW
+
+## Technical description
+VHDLLab consists of server and client application communicating by Spring
+HTTP Invoker over HTTPS.
+
+Client application is distributed by JNLP. It uses
+[Spring Rich Client](spring-rich-c.sourceforge.net) and Swing. The use of
+VHDLLab server is transparent to the user.
+
+Server application is architected as a service for client application. It has
+no presentation layer, only service and DAO. It provides a way to: create,
+update, retrieve projects, files and preferences; compile and simulate VHDL;
+extract metadata, resolve file dependencies and generate VHDL code. Server
+application uses [Springframework](http://www.springframework.org) (DI, ORM,
+AOP, etc.), Spring Security and Hibernate.
+
+### Statistics
 [cloc](http://cloc.sourceforge.net) reports roughly 600 Java files, 45,000
 lines of code + 20,000 lines of comments + 13,000 blank lines.
 
-## Requirements
+### Requirements
 Client side is expected to have [JRE](http://java.com) 6+ and connectivity to
 VHDLLab server. That is about it.
 
@@ -63,14 +81,10 @@ Server side requirements are as follows:
 
 Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.1.0.
 
-## Install
-TBW
-
-## Configuration
-TBW
-
-## Development documentation
-TBW
+### Natural Language
+A portion of codebase is in Croatian but most is in English. On the other
+hand, user interacts with client application exclusively in English. I18N
+files exist but don't cover 100% of use cases.
 
 ## Source code
 Source code is available at github: https://github.com/mbezjak/vhdllab
