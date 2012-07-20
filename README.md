@@ -62,7 +62,7 @@ no presentation layer, only service and DAO. It provides a way to: create,
 update, retrieve projects, files and preferences; compile and simulate VHDL;
 extract metadata, resolve file dependencies and generate VHDL code. Server
 application uses [Springframework](http://www.springframework.org) (DI, ORM,
-AOP, etc.), Spring Security and Hibernate.
+AOP, etc.), Spring Security and [Hibernate](http://www.hibernate.org).
 
 ### Statistics
 [cloc](http://cloc.sourceforge.net) reports roughly 600 Java files, 45,000
