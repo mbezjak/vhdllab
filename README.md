@@ -40,7 +40,25 @@ summary is available both in [Croatian] [ra-sum-hr] and in
 [ra-sum-en]: http://java.zemris.fer.hr/rektor/vhdllab/summary.html
 
 ## Features
-TBW
+
+ * Low user requirement: only JRE 6+
+ * Create digital circuits by:
+    * writing VHDL source code
+    * drawing schemas
+    * drawing automatons
+ * Test circuits using testbench editor
+ * Compile, simulate and view results
+ * Projects, files and user preferences are stored on server (no manual
+   synchronization required when user wants to work at different locations)
+ * Dependency resolution for files
+ * VHDL source code generation from schematic, automaton or testbench files
+ * Security (HTTP, mandatory login, roles)
+ * Auditing:
+    * via project and file snapshots on every change
+    * client log output is stored on server
+
+Some features are visible in
+[screenshots](https://github.com/mbezjak/vhdllab/wiki/Screenshots).
 
 ## Limitations
 VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
