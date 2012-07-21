@@ -116,6 +116,9 @@ VHDLLab (editor components being a large exception) is in excellent condition.
 ## Source code
 Source code is available at github: https://github.com/mbezjak/vhdllab
 
+## Issues
+Report issues at https://github.com/mbezjak/vhdllab/issues
+
 ## Additional documentation
 More documentation can be found at: https://github.com/mbezjak/vhdllab/wiki
 
