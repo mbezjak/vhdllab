@@ -1,3 +1,22 @@
+-- This file contains auditing DDL (SQL views) that hibernate can't create
+-- automatically. Creating these views isn't a requirement for VHDLLab. Rather,
+-- it's meant to provide a way to access some of auditing information in a
+-- (more) convenient way. After these views are created, the following statement
+-- should output statistics for each user and their projects:
+--
+--     SELECT * FROM history_statistics;
+--
+-- If one project represents one programming assignment then value in
+-- `total_avg_change' column represents an average number of time that project
+-- owner (e.g. a student) has saved a file. A number closer to 1 *might* be an
+-- indication that student copied and pasted other user's work, i.e. cheating
+-- occurrence. These numbers aren't exact, but they should at least provide
+-- information on which student should an assistent/professor focus their
+-- efforts.
+--
+-- Note: DDL is created for MySQL and may not work for other database management
+-- systems.
+
 CREATE OR REPLACE VIEW project_history_ordered AS
     SELECT user_id, name, id AS project_id, created_on, deleted_on, insert_version
         FROM project_history
@@ -82,5 +101,3 @@ CREATE OR REPLACE VIEW history_statistics AS
             LEFT OUTER JOIN file_changes_current fhc ON fhc.project_id = po.project_id
             LEFT OUTER JOIN file_count_current fcc   ON fcc.project_id = po.project_id
             LEFT OUTER JOIN file_history_total_file_count ftc ON ftc.project_id = po.project_id
-
-
