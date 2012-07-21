@@ -25,7 +25,7 @@ Developers:
 <td>Project lead</td>
 </tr>
 <tr>
-<td><a href="mailto:miro.bezjak@fer.hr?subject=About%20VHDLLab">Bezjak, Miro</a></td>
+<td><a href="mailto:bezjak.miro@gmail.com?subject=About%20VHDLLab">Bezjak, Miro</a></td>
 <td>
 VHDLLab Server<br/>
 VHDLLab build system<br/>
