@@ -117,7 +117,15 @@ VHDLLab (editor components being a large exception) is in excellent condition.
 Source code is available at github: https://github.com/mbezjak/vhdllab
 
 ## Additional documentation
-Additional documentation is available at: https://github.com/mbezjak/vhdllab/wiki
+More documentation can be found at: https://github.com/mbezjak/vhdllab/wiki
+
+No longer in use, but it could still be useful, at least for historical or
+sentimental reasons:
+
+ * original SVN repository; it's read and write protected:
+   http://morgoth.zemris.fer.hr/svn/vhdllab
+ * trac project; information present there is mostly in Croatian but it has read
+   access to original SVN repository: morgoth.zemris.fer.hr/trac/vhdllab
 
 ## License
 Project uses Apache license version 2.0. Check LICENSE and NOTICE files for
