@@ -1,13 +1,13 @@
 #-------------------------------------------------------------------------------
 # See the NOTICE file distributed with this work for additional information
 # regarding copyright ownership.
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #   http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ https.port=8443
 
 # {files} argument will be replaced with actual list of files that needs to be
 # compiled/simulated.
-# 
+#
 # In ghdl.simulation.cmd additional properties will be appended as run
 # options, i.e., --vcd and --stop-time. Former controls file name that should
 # be parsed for results and latter is only available as a runtime parameter
@@ -52,10 +52,10 @@ ghdl.simulation.cmd=/usr/bin/ghdl --elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,
 ###############################################################################
 # Since keystore is used both for SSL and for signing vhdllab-client
 # application it is imperative you use different keystore then one provided in
-# vhdllab-war/src/dev/devel-keystore. That keystore is very weak an should be
+# vhdllab-server/src/dev/devel-keystore. That keystore is very weak an should be
 # used only during development process.
 #
-# Note: keystore location is relative to vhdllab-war directory. If you prefer
+# Note: keystore location is relative to vhdllab-server directory. If you prefer
 # you can use absolute path.
 keystore.location=src/dev/devel-keystore
 # expired-keystore is used to test how vhdllab-client handles situations when
