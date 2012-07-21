@@ -82,6 +82,9 @@ metadata, resolve file dependencies and generate VHDL code. Server application
 uses [Springframework](http://www.springframework.org) (DI, ORM, AOP, etc.),
 Spring Security and [Hibernate](http://www.hibernate.org).
 
+Server application can be viewed as an example of
+[SAAS](http://en.wikipedia.org/wiki/Software_as_a_Service).
+
 ### Statistics
 [cloc](http://cloc.sourceforge.net) reports roughly 600 Java files, 45,000 lines
 of code + 20,000 lines of comments + 13,000 blank lines.
@@ -103,6 +106,12 @@ Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.1.0.
 A portion of codebase is in Croatian but most is in English. On the other hand,
 user interacts with client application exclusively in English. I18N files exist
 but don't cover 100% of use cases.
+
+### Codebase Quality
+It varies. VHDLLab was written by students for students. Many were still
+learning Java and OOP at the time. That being said, a large portion of VHDLLab
+was written, then rewritten, and rewritten again. To the point where most of
+VHDLLab (editor components being a large exception) is in excellent condition.
 
 ## Source code
 Source code is available at github: https://github.com/mbezjak/vhdllab
