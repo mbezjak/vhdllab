@@ -100,7 +100,7 @@ Server side requirements are as follows:
  * [MySQL](http://www.mysql.com) 5+
  * [GHDL](http://ghdl.free.fr) 0.29+ for VHDL compilation and simulation
 
-Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.1.0.
+Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.2.1.
 
 ### Natural Language
 A portion of codebase is in Croatian but most is in English. On the other hand,
