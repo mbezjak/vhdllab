@@ -125,7 +125,7 @@ sentimental reasons:
  * original SVN repository; it's read and write protected:
    http://morgoth.zemris.fer.hr/svn/vhdllab
  * trac project; information present there is mostly in Croatian but it has read
-   access to original SVN repository: morgoth.zemris.fer.hr/trac/vhdllab
+   access to original SVN repository: http://morgoth.zemris.fer.hr/trac/vhdllab
 
 ## License
 Project uses Apache license version 2.0. Check LICENSE and NOTICE files for
