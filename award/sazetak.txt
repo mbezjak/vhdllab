@@ -1,0 +1,27 @@
+  VHDLLab, Obrazovni programski sustav za modeliranje i simuliranje digitalnih
+                                    sklopova
+
+                 Miro Bezjak, Davor Delač, Aleksandar Prokopec
+
+
+Ovaj rad opisuje programski sustav VHDLLab za modeliranje i simuliranje
+digitalnih sklopova primijenjen na Bolonjskom studiju na Fakultetu
+elektrotehnike i računarstva u Zagrebu. Programski sustav je napravljen u skladu
+s ciljevima i težnjama Bolonjskog procesa, i služi za unaprijeđenje kvalitete
+obrazovanja. Primjenjiv je na područje digitalne elektronike i digitalne logike.
+Osmišljen je kako bi ublažio krivulju učenja studentu koji se prvi put susreće s
+temama poput digitalnog sklopa, njegovog modeliranja i simuliranja.
+
+Sustav VHDLLab je uspješno primijenjen na kolegiju Digitalna logika na prvom
+semestru Bolonjskog studija Fakulteta elektrotehnike i računarstva (akademska
+godina 2007./2008.). U okviru rada obrađeni su i dojmovi i iskustva studenata
+koji su koristili sustav. Kvalitetu sustava najbolje opisuju njihove pozitivne
+kritike.
+
+Sustav je napravljen slojevito poštujući opće prihvaćene programske modele i
+arhitekture, pa je u potpunosti proširiv s novim mogućnostima i usklađen s
+postojećim sustavima. Ovo omogućava proširenja u budućnosti, kao i mogućnost
+njegove uporabe na drugim kolegijima.
+
+
+Ključne riječi: VHDL, IDE, simulacija, modeliranje, digitalni sklop

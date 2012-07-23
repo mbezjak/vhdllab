@@ -28,16 +28,19 @@ year approximately 700 students use it to complete programming assignments.
 
 ## Award
 A paper describing VHDLLab, authored by Miro Bezjak, Davor Delač and Aleksandar
-Prokopec under supervision of Mr.sc. Marko Čupić (now Dr.sc.), was among the
-[winners] [ra-source] of University of Zagreb's Rector's Award in academic year
+Prokopec under supervision of mr.sc. Marko Čupić (now dr.sc.), was among the
+[winners] [ra-award] of University of Zagreb's Rector's Award in academic year
 2007/2008. Paper is [available] [ra-paper] online as a PDF in Croatian. Paper
-summary is available both in [Croatian] [ra-sum-hr] and in
-[English] [ra-sum-en].
+summary is available both in [Croatian] [ra-sum-hr] and in [English]
+[ra-sum-en]. As a backup those files are available in `award` directory. Source
+files can be obtained by `git checkout v1` then navigating to `rector` directory
+or via [github] [ra-source].
 
-[ra-source]: http://www.unizg.hr/fileadmin/rektorat/dokumenti/rektnagrade/Rektorova_nagrada_2007-2008.pdf
+[ra-award]:  http://www.unizg.hr/fileadmin/rektorat/dokumenti/rektnagrade/Rektorova_nagrada_2007-2008.pdf
 [ra-paper]:  http://java.zemris.fer.hr/rektor/vhdllab/vhdllab-rad.pdf
 [ra-sum-hr]: http://java.zemris.fer.hr/rektor/vhdllab/sazetak.html
 [ra-sum-en]: http://java.zemris.fer.hr/rektor/vhdllab/summary.html
+[ra-source]: https://github.com/mbezjak/vhdllab/tree/v1/rector
 
 ## Features
 
