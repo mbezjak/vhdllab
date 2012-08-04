@@ -100,9 +100,9 @@ server application is started. Note that database name can be changed in
 5. Start build in *production* profile by executing these commands in a command
 line. This can take a while, because maven will try to download the Internet. :)
 
-    $ mvn clean install
-    $ mvn clean
-    $ mvn -Pprod
+        $ mvn clean install
+        $ mvn clean
+        $ mvn -Pprod
 
 6. Root VHDLLab directory should now contain `vhdllab.war` file. Deploy it to
 Tomcat container.
