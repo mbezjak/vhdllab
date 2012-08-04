@@ -118,7 +118,7 @@ mode much faster. Client application can be run or debugged directly from
 Eclipse by executing
 `vhdllab-client/src/main/java/hr/fer/zemris/vhdllab/platform/Main.java`.
 
-## Technical description
+## Technical Description
 VHDLLab consists of server and client application communicating by Spring HTTP
 Invoker over HTTPS.
 
@@ -165,13 +165,13 @@ learning Java and OOP at the time. That being said, a large portion of VHDLLab
 was written, then rewritten, and rewritten again. To the point where most of
 VHDLLab (editor components being a large exception) is in excellent condition.
 
-## Source code
+## Source Code
 Source code is available at github: https://github.com/mbezjak/vhdllab
 
 ## Issues
 Report issues at https://github.com/mbezjak/vhdllab/issues
 
-## Additional documentation
+## Additional Documentation
 More documentation can be found at: https://github.com/mbezjak/vhdllab/wiki
 
 No longer in use, but it could still be useful, at least for historical or
