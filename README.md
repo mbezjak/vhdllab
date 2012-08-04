@@ -1,5 +1,5 @@
 # VHDLLab
-Educational software for modelling and simulation of digital circuits.
+Educational software for modeling and simulation of digital circuits.
 
 ## Summary
 VHDLLab is a web based IDE for [VHDL](http://en.wikipedia.org/wiki/Vhdl). It's
@@ -44,15 +44,15 @@ or via [github] [ra-source].
 
 ## Features
 
- * Low user requirement: only JRE 6+
+ * Low requirement for end users: only JRE 6+
  * Create digital circuits by:
     * writing VHDL source code
-    * drawing schemas
+    * drawing schemes
     * drawing automatons
  * Test circuits using testbench editor
  * Compile, simulate and view results
  * Projects, files and user preferences are stored on server (no manual
-   synchronization required when user wants to work at different locations)
+   synchronization required when end user wants to work at different locations)
  * Dependency resolution for files
  * VHDL source code generation from schematic, automaton or testbench files
  * Security (HTTP, mandatory login, roles)
@@ -67,8 +67,56 @@ Some features are visible in
 VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
 are missing. It has enough features to be useful in educational setting.
 
+One major limitation is case sensitivity. VHDL is case insensitive, but VHDLLab
+might not be. That is, majority of code in VHDLLab assumes case insensitivity,
+but there are no guaranties. Major uncertainty lies with database management
+system. For that reason, it's advisable to use the same entity/component names
+throughout VHDLLab editors.
+
 ## Install
-TBW
+Unfortunately, current state of build system and lack of server side code
+doesn't allow for pre-built WAR application. That might change sometime in the
+future. Until then, the only way to acquire WAR file is to build it from source.
+
+### Building from source
+Building requires JDK 6+ and Maven.
+
+1. Download and install [GHDL](http://ghdl.free.fr).
+
+2. Acquire VHDLLab source code by either of these methods:
+
+ * `git clone https://github.com/mbezjak/vhdllab.git`
+ * download tagged version https://github.com/mbezjak/vhdllab/tags
+ * download latest version https://github.com/mbezjak/vhdllab/zipball/master
+
+3. Copy `configuration.properties-sample` to `configuration.properties` and edit
+it.
+
+4. Create MySQL database named `vhdllab` with all privileges. Appropriate
+database structure is created automatically by Hibernate the first time that
+server application is started. Note that database name can be changed in
+`configuration.properties`.
+
+5. Start build in *production* profile by executing these commands in a command
+line. This can take a while, because maven will try to download the Internet. :)
+
+    $ mvn clean install
+    $ mvn clean
+    $ mvn -Pprod
+
+6. Root VHDLLab directory should now contain `vhdllab.war` file. Deploy it to
+Tomcat container.
+
+7. End user installation is simple. Only requirement is JRE 6+. Assuming Tomcat
+is started on `localhost` at port `8080`, client application can be started by
+navigation to https://localhost:8080/vhdllab/launch.jnlp.
+
+Note that while developing VHDLLab, there is no need to do steps 5. and 6. They
+can take a long time. Instead `fast-deploy-jetty.sh` (or `.bat` in Microsoft
+Windows) can be used. The script will deploy server applcation in development
+mode much faster. Client application can be run or debugged directly from
+Eclipse by executing
+`vhdllab-client/src/main/java/hr/fer/zemris/vhdllab/platform/Main.java`.
 
 ## Technical description
 VHDLLab consists of server and client application communicating by Spring HTTP
@@ -76,14 +124,15 @@ Invoker over HTTPS.
 
 Client application is distributed by JNLP. It uses
 [Spring Rich Client](spring-rich-c.sourceforge.net) and Swing. The use of
-VHDLLab server is transparent to the user.
+VHDLLab server is transparent to the end user.
 
 Server application is architected as a service for client application. It has no
 presentation layer, only service and DAO. It provides a way to: create, update,
 retrieve projects, files and preferences; compile and simulate VHDL; extract
 metadata, resolve file dependencies and generate VHDL code. Server application
 uses [Springframework](http://www.springframework.org) (DI, ORM, AOP, etc.),
-Spring Security and [Hibernate](http://www.hibernate.org).
+Spring Security and [Hibernate](http://www.hibernate.org). Recommended
+[DBMS](http://en.wikipedia.org/wiki/Dbms) is MySQL.
 
 Server application can be viewed as an example of
 [SAAS](http://en.wikipedia.org/wiki/Software_as_a_Service).
@@ -107,8 +156,8 @@ Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.2.1.
 
 ### Natural Language
 A portion of codebase is in Croatian but most is in English. On the other hand,
-user interacts with client application exclusively in English. I18N files exist
-but don't cover 100% of use cases.
+end user interacts with client application exclusively in English. I18N files
+exist but don't cover 100% of use cases.
 
 ### Codebase Quality
 It varies. VHDLLab was written by students for students. Many were still
