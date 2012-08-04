@@ -78,7 +78,7 @@ Unfortunately, current state of build system and lack of server side code
 doesn't allow for pre-built WAR application. That might change sometime in the
 future. Until then, the only way to acquire WAR file is to build it from source.
 
-### Building from source
+### Build from Source Code
 Building requires JDK 6+ and Maven.
 
 1. Download and install [GHDL](http://ghdl.free.fr).
