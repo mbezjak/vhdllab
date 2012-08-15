@@ -165,15 +165,13 @@ learning Java and OOP at the time. That being said, a large portion of VHDLLab
 was written, then rewritten, and rewritten again. To the point where most of
 VHDLLab (editor components being a large exception) is in excellent condition.
 
-## Source Code
-Source code is available at github: https://github.com/mbezjak/vhdllab
+## Further Resources
 
-## Issues
-Report issues at https://github.com/mbezjak/vhdllab/issues
-
-## Additional Documentation
-* Mail list: http://groups.google.com/group/vhdllab
-* More documentation can be found at: https://github.com/mbezjak/vhdllab/wiki
+ * Homepage:       https://github.com/mbezjak/vhdllab
+ * Issue tracker:  https://github.com/mbezjak/vhdllab/issues
+ * Wiki:           https://github.com/mbezjak/vhdllab/wiki
+ * Mail list:      http://groups.google.com/group/vhdllab
+ * License:        Apache 2.0 (see LICENSE and NOTICE files)
 
 No longer in use, but it could still be useful, at least for historical or
 sentimental reasons:
@@ -182,7 +180,3 @@ sentimental reasons:
    http://morgoth.zemris.fer.hr/svn/vhdllab
  * trac project; information present there is mostly in Croatian but it has read
    access to original SVN repository: http://morgoth.zemris.fer.hr/trac/vhdllab
-
-## License
-Project uses Apache license version 2.0. Check LICENSE and NOTICE files for
-more info.
