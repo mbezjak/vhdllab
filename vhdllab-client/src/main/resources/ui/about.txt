@@ -8,7 +8,7 @@ Version: ${version}
 <p>
 <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">&copy; Copyright 2006-2012</a> the original authors.
 <p>
-Send bug reports to <a href="mailto:vhdllab@gmail.com?subject=Bug%20in%20VHDLLab%20Client%20-%20please%20provide%20short%20description%20here">vhdllab@gmail.com</a><br/>
+Send bug reports to <a href="https://github.com/mbezjak/vhdllab/issues/new">github.com/mbezjak/vhdllab/issues/new</a><br/>
 Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com/group/vhdllab</a><br/>
 Project page: <a href="https://github.com/mbezjak/vhdllab">github.com/mbezjak/vhdllab</a>
 </td>
@@ -74,7 +74,7 @@ Version: ${version}
 <p>
 <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">&copy; Copyright 2006-2012</a> the original authors.
 <p>
-Send bug reports to <a href="mailto:vhdllab@gmail.com?subject=Bug%20in%20VHDLLab%20Client%20-%20please%20provide%20short%20description%20here">vhdllab@gmail.com</a><br/>
+Send bug reports to <a href="https://github.com/mbezjak/vhdllab/issues/new">github.com/mbezjak/vhdllab/issues/new</a><br/>
 Google group: <a href="http://groups.google.com/group/vhdllab">groups.google.com/group/vhdllab</a><br/>
 Project page: <a href="https://github.com/mbezjak/vhdllab">github.com/mbezjak/vhdllab</a>
 </td>
