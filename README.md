@@ -7,7 +7,7 @@ designed for educational purpose as an alternative to commercial products that
 provide solution for VHDL.
 
 ## Screenshots
-For the impatient: https://github.com/mbezjak/vhdllab/wiki/Screenshots
+For the impatient: http://imgur.com/a/CS6zn
 
 ## Rationale
 The need for VHDLLab appeared at Faculty of Electrical Engineering and
@@ -61,7 +61,7 @@ or via [github] [ra-source].
     * client log output is stored on server
 
 Some features are visible in
-[screenshots](https://github.com/mbezjak/vhdllab/wiki/Screenshots).
+[screenshots](http://imgur.com/a/CS6zn).
 
 ## Limitations
 VHDLLab is in no way a complete replacement for WebISE. Many WebISE's features
