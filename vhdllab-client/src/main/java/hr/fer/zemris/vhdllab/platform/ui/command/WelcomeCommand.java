@@ -44,7 +44,7 @@ public class WelcomeCommand extends ApplicationWindowAwareCommand {
         int count = pref.getInt(PREF_WELCOME_DIALOG_SHOW_COUNT, 0);
 
         if (count < 10) {
-            // showWelcomeDialog();
+            showWelcomeDialog();
             showUpdateJavaDialog();
 
             pref.putInt(PREF_WELCOME_DIALOG_SHOW_COUNT, count + 1);
