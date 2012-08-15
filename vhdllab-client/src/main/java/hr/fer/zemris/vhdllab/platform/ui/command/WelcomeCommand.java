@@ -58,7 +58,7 @@ public class WelcomeCommand extends ApplicationWindowAwareCommand {
     }
 
     protected void showUpdateJavaDialog() {
-        if (!SystemUtils.JAVA_RUNTIME_VERSION.startsWith("1.6.0_21")) {
+        if (!SystemUtils.JAVA_RUNTIME_VERSION.startsWith("1.7")) {
             UpdateJavaDialog dialog = new UpdateJavaDialog();
             dialog.setParentComponent(getApplicationWindow().getControl());
             dialog.showDialog();
