@@ -279,7 +279,12 @@
         <scope>runtime</scope>
       </dependency>
 
-      <!-- Springframwork dependencies with compile scope -->
+      <!-- Springframework dependencies with compile scope -->
+      <dependency> <!-- because of bug during startup in v1.6.1 -->
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.6.12</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-aspects</artifactId>
@@ -333,7 +338,7 @@
         </exclusions>
       </dependency>
 
-      <!-- Springframwork dependencies with test scope -->
+      <!-- Springframework dependencies with test scope -->
       <dependency>
         <groupId>org.springframework</groupId>
         <artifactId>spring-test</artifactId>
