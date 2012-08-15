@@ -172,7 +172,8 @@ Source code is available at github: https://github.com/mbezjak/vhdllab
 Report issues at https://github.com/mbezjak/vhdllab/issues
 
 ## Additional Documentation
-More documentation can be found at: https://github.com/mbezjak/vhdllab/wiki
+* Mail list: http://groups.google.com/group/vhdllab
+* More documentation can be found at: https://github.com/mbezjak/vhdllab/wiki
 
 No longer in use, but it could still be useful, at least for historical or
 sentimental reasons:
