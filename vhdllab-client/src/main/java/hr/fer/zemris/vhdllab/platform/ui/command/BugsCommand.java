@@ -55,7 +55,7 @@ public class BugsCommand extends ApplicationWindowAwareCommand {
             HtmlPane pane = new HtmlPane();
 
             pane.setText("<html>If you notice any bugs in VHDLLab please report them on official<br />"
-                            + "VHDLLab issue tracker: <a href='http://morgoth.zemris.fer.hr/trac/vhdllab/newticket'>http://morgoth.zemris.fer.hr/trac/vhdllab/newticket</a>.<br />"
+                            + "VHDLLab issue tracker: <a href='https://github.com/mbezjak/vhdllab/issues/new'>https://github.com/mbezjak/vhdllab/issues/new</a>.<br />"
                             + "When creating new issue please document reproducibility of a bug. It will go a<br />"
                             + "long way towards fixing or at least mitigating it.<br />"
                             + "<br />"
