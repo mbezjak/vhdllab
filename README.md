@@ -1,6 +1,8 @@
 # VHDLLab
 Educational software for modeling and simulation of digital circuits.
 
+[![Build Status](https://secure.travis-ci.org/mbezjak/vhdllab.png?branch=master)](http://travis-ci.org/mbezjak/vhdllab)
+
 ## Summary
 VHDLLab is a web based IDE for [VHDL](http://en.wikipedia.org/wiki/Vhdl). It's
 designed for educational purpose as an alternative to commercial products that
@@ -171,6 +173,7 @@ VHDLLab (editor components being a large exception) is in excellent condition.
  * Issue tracker:  https://github.com/mbezjak/vhdllab/issues
  * Wiki:           https://github.com/mbezjak/vhdllab/wiki
  * Mail list:      http://groups.google.com/group/vhdllab
+ * CI sever:       http://travis-ci.org/mbezjak/vhdllab
  * License:        Apache 2.0 (see LICENSE and NOTICE files)
 
 No longer in use, but it could still be useful, at least for historical or
