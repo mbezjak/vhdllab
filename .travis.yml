@@ -4,4 +4,6 @@ jdk:
   - openjdk7
   - oraclejdk7
 
-script: mvn
+script:
+  - cp configuration.properties-sample configuration.properties
+  - mvn
