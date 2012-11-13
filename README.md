@@ -172,6 +172,7 @@ VHDLLab (editor components being a large exception) is in excellent condition.
  * Homepage:   https://github.com/mbezjak/vhdllab
  * Issues:     https://github.com/mbezjak/vhdllab/issues
  * Changelog:  see Changelog.md file
+ * Roadmap:    see Roadmap.md file
  * Wiki:       https://github.com/mbezjak/vhdllab/wiki
  * Mail list:  http://groups.google.com/group/vhdllab
  * CI Server:  http://travis-ci.org/mbezjak/vhdllab
