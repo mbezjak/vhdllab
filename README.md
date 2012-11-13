@@ -169,12 +169,13 @@ VHDLLab (editor components being a large exception) is in excellent condition.
 
 ## Further Resources
 
- * Homepage:       https://github.com/mbezjak/vhdllab
- * Issue tracker:  https://github.com/mbezjak/vhdllab/issues
- * Wiki:           https://github.com/mbezjak/vhdllab/wiki
- * Mail list:      http://groups.google.com/group/vhdllab
- * CI server:      http://travis-ci.org/mbezjak/vhdllab
- * License:        Apache 2.0 (see LICENSE and NOTICE files)
+ * Homepage:   https://github.com/mbezjak/vhdllab
+ * Issues:     https://github.com/mbezjak/vhdllab/issues
+ * Changelog:  see Changelog.md file
+ * Wiki:       https://github.com/mbezjak/vhdllab/wiki
+ * Mail list:  http://groups.google.com/group/vhdllab
+ * CI Server:  http://travis-ci.org/mbezjak/vhdllab
+ * License:    Apache 2.0 (see LICENSE and NOTICE files)
 
 No longer in use, but it could still be useful, at least for historical or
 sentimental reasons:
