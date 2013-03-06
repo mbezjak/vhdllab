@@ -125,7 +125,7 @@ VHDLLab consists of server and client application communicating by Spring HTTP
 Invoker over HTTPS.
 
 Client application is distributed by JNLP. It uses
-[Spring Rich Client](spring-rich-c.sourceforge.net) and Swing. The use of
+[Spring Rich Client](http://spring-rich-c.sourceforge.net) and Swing. The use of
 VHDLLab server is transparent to the end user.
 
 Server application is architected as a service for client application. It has no
