@@ -57,7 +57,7 @@ or via [github] [ra-source].
    synchronization required when end user wants to work at different locations)
  * Dependency resolution for files
  * VHDL source code generation from schematic, automaton or testbench files
- * Security (HTTP, mandatory login, roles)
+ * Security (HTTPS, mandatory login, roles)
  * Auditing:
     * via project and file snapshots on every change
     * client log output is stored on server
