@@ -15,8 +15,8 @@ if [ "$1" != "--force" ]; then
     echo "directory: $VHDLLAB_WEBAPP_DIR"
     echo "file: $VHDLLAB_WEBAPP_WAR"
     echo "Are you sure you want to continue deploying vhdllab?"
-    read ANSWERE
-    if [ "$ANSWERE" != "y" ]; then
+    read ANSWER
+    if [ "$ANSWER" != "y" ]; then
         exit 0
     fi
 fi
