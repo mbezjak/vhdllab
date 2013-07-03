@@ -88,7 +88,7 @@ Building requires JDK 6+ and Maven.
 2. Acquire VHDLLab source code by either of these methods:
 
  * `git clone https://github.com/mbezjak/vhdllab.git`
- * download tagged version https://github.com/mbezjak/vhdllab/tags
+ * download tagged version https://github.com/mbezjak/vhdllab/releases
  * download latest version https://github.com/mbezjak/vhdllab/zipball/master
 
 3. Copy `configuration.properties-sample` to `configuration.properties` and edit
