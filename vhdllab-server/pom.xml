@@ -175,6 +175,13 @@
       <version>1.1.1</version>
     </dependency>
 
+    <!-- http://stackoverflow.com/questions/10482563/aop-java-lang-illegalargumentexception-error-at-0-cant-find-referenced-poi -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>1.7.3</version>
+    </dependency>
+
     <!-- Apache dependencies with compile scope -->
     <!--
       Note: vhdllab-server also uses Apache dependencies from
