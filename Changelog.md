@@ -1,3 +1,6 @@
+# 2.6.3 [2013-11-15]
+ * Fix bug when MySQL is not configured to be case insensitive
+
 # 2.6.2 [2013-10-14]
  * Fix bug: AOP exception during boot
 

@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -245,7 +245,7 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
             	}
             	String label = source.substring(marker, pos);
             	if(label.contains(".")) { // hvata nazive oblika library.sklop, npr. WORK.sklop1
-            		continue; 
+            		continue;
             	}
             	if(source.startsWith(WHITESPACE, pos)) {
             		pos += WHITESPACE.length();
@@ -313,6 +313,7 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
 
     private Set<String> extract(String original) {
         Set<String> dependencies = new HashSet<String>();
+        Set<String> depsOrigCase = new HashSet<String>();
         String source = original.toUpperCase(Locale.ENGLISH);
 
         int pos = 0;
@@ -342,9 +343,12 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
                 pos = start;
                 continue;
             }
-            String component = original.substring(start, pos).toLowerCase();
-            if (!dependencies.contains(component)) {
-                dependencies.add(component);
+
+            String component = original.substring(start, pos);
+            String cmpIgnoreCase = component.toLowerCase();
+            if (!dependencies.contains(cmpIgnoreCase)) {
+                dependencies.add(cmpIgnoreCase);
+                depsOrigCase.add(component);
             }
         }
 
@@ -368,13 +372,17 @@ public class SourceMetadataExtractor extends AbstractMetadataExtractor {
                 pos = start;
                 continue;
             }
-            String component = original.substring(start, pos).toLowerCase();
+
+            String component = original.substring(start, pos);
+            String cmpIgnoreCase = component.toLowerCase();
             if(component.contains(";")) continue; // ako sam uhvatio "END COMPONENT sklop2;"
-            if (!dependencies.contains(component)) {
-                dependencies.add(component);
+            if (!dependencies.contains(cmpIgnoreCase)) {
+                dependencies.add(cmpIgnoreCase);
+                depsOrigCase.add(component);
             }
         }
-        return dependencies;
+
+        return depsOrigCase;
     }
 
     @Override
