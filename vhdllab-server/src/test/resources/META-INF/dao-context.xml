@@ -2,13 +2,13 @@
 <!-- ***************************************************************************
   See the NOTICE file distributed with this work for additional information
   regarding copyright ownership.
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,12 +16,14 @@
   limitations under the License.
 **************************************************************************** -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
     destroy-method="close">
@@ -70,34 +72,34 @@
 
   <!-- DAO classes -->
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.PreferencesFileDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <!--
     Support DAO classes - used to test entity hierarchy (common
     properties in real entities)
   -->
   <bean id="baseEntityDao" class="hr.fer.zemris.vhdllab.dao.impl.support.BaseEntityDao"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean id="namedEntityDao" class="hr.fer.zemris.vhdllab.dao.impl.support.NamedEntityDao"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean id="ownedEntityTableDao" class="hr.fer.zemris.vhdllab.dao.impl.support.OwnedEntityTableDao"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean id="fileInfoDao" class="hr.fer.zemris.vhdllab.dao.impl.support.FileInfoDao"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean id="historyDao" class="hr.fer.zemris.vhdllab.dao.impl.support.HistoryDao"
-    autowire="autodetect" />
+    autowire="byType" />
 
 </beans>

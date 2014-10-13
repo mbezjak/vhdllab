@@ -2,13 +2,13 @@
 <!-- ***************************************************************************
   See the NOTICE file distributed with this work for additional information
   regarding copyright ownership.
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,15 +16,17 @@
   limitations under the License.
 **************************************************************************** -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
-  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
-  xmlns:security="http://www.springframework.org/schema/security"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-                http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-                http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
-                http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
-  
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+                           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+                           http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+
   <context:property-placeholder location="/WEB-INF/database.properties"/>
 
   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
@@ -78,19 +80,19 @@
 
   <!-- DAO classes -->
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ProjectDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.FileDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.PreferencesFileDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.ClientLogDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <bean class="hr.fer.zemris.vhdllab.dao.impl.PredefinedFileDaoImpl"
-    autowire="autodetect" />
+    autowire="byType" />
 
   <!-- Service classes -->
   <bean id="workspaceService" class="hr.fer.zemris.vhdllab.service.impl.WorkspaceServiceImpl" />
@@ -99,13 +101,13 @@
   <bean id="metadataExtractionService" class="hr.fer.zemris.vhdllab.service.impl.MetadataExtractionServiceImpl" />
   <bean id="simulator" class="hr.fer.zemris.vhdllab.service.impl.GhdlSimulator" />
 
-  
+
   <!-- Aspects -->
   <bean class="hr.fer.zemris.vhdllab.service.aspect.EntitySecurityAspect" />
   <bean class="hr.fer.zemris.vhdllab.service.aspect.LogAspect" />
 
-  
-  
+
+
   <bean id="httpWorkspaceService"
         class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
     <property name="service">
@@ -115,7 +117,7 @@
       <value>hr.fer.zemris.vhdllab.service.WorkspaceService</value>
     </property>
   </bean>
-  
+
   <bean id="httpPreferencesFileService"
         class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
     <property name="service">
@@ -125,7 +127,7 @@
       <value>hr.fer.zemris.vhdllab.service.PreferencesFileService</value>
     </property>
   </bean>
-  
+
   <bean id="httpClientLogService"
         class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
     <property name="service">
@@ -135,7 +137,7 @@
       <value>hr.fer.zemris.vhdllab.service.ClientLogService</value>
     </property>
   </bean>
-  
+
   <bean id="httpMetadataExtractionService"
         class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
     <property name="service">
@@ -145,7 +147,7 @@
       <value>hr.fer.zemris.vhdllab.service.MetadataExtractionService</value>
     </property>
   </bean>
-  
+
   <bean id="httpSimulator"
         class="hr.fer.zemris.vhdllab.remoting.GzipHttpInvokerServiceExporter">
     <property name="service">
@@ -155,7 +157,7 @@
       <value>hr.fer.zemris.vhdllab.service.Simulator</value>
     </property>
   </bean>
-  
+
   <bean id="urlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
     <property name="mappings">
       <props>
@@ -167,12 +169,12 @@
       </props>
     </property>
   </bean>
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
   <bean id="fileTypeBasedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.FileTypeBasedMetadataExtractor" />
   <bean id="sourceMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.source.SourceMetadataExtractor" />
   <bean id="schemaMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.schema.SchemaMetadataExtractor" />
@@ -180,11 +182,11 @@
   <bean id="testbenchMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.testbench.TestbenchMetadataExtractor" />
   <bean id="predefinedMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.predefined.PredefinedMetadataExtractor" />
   <bean id="simulationMetadataExtractor" class="hr.fer.zemris.vhdllab.service.extractor.simulation.SimulationMetadataExtractor" />
-  
- 
-  
-  
-  
+
+
+
+
+
   <security:authentication-manager alias="authenticationManager"/>
 <!--  <security:authentication-provider>-->
 <!--    <security:user-service>-->
@@ -204,13 +206,13 @@
 
     <bean id="preAuthenticatedUserDetailsService"
             class="org.springframework.security.providers.preauth.PreAuthenticatedGrantedAuthoritiesUserDetailsService"/>
-            
+
     <bean id="j2eePreAuthFilter" class="org.springframework.security.ui.preauth.j2ee.J2eePreAuthenticatedProcessingFilter">
         <security:custom-filter position="PRE_AUTH_FILTER" />
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
     </bean>
-    
+
     <bean id="preAuthenticatedProcessingFilterEntryPoint"
             class="org.springframework.security.ui.preauth.PreAuthenticatedProcessingFilterEntryPoint"/>
 
