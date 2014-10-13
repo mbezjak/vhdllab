@@ -1,3 +1,6 @@
+# 2.6.4 [2014-10-13]
+ * Compatibility with JRE8.
+
 # 2.6.3 [2013-11-15]
  * Fix bug when MySQL is not configured to be case insensitive
 
