@@ -28,7 +28,7 @@
   <packaging>pom</packaging>
   <!-- modules are listed in each profile -->
   <properties>
-    <application.version>2.6.3</application.version>
+    <application.version>2.6.4</application.version>
     <spring.version>3.2.11.RELEASE</spring.version>
   </properties>
 
