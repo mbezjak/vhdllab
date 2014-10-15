@@ -2,13 +2,13 @@
 <!-- ***************************************************************************
   See the NOTICE file distributed with this work for additional information
   regarding copyright ownership.
-  
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
     http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,46 @@
                 http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
   <context:property-placeholder location="server.properties"/>
-  <context:component-scan base-package="hr.fer.zemris.vhdllab.platform" />
+  <context:annotation-config />
+
+  <!-- components -->
+  <bean id="autoPublishListenerBeanPostProcessor" class="hr.fer.zemris.vhdllab.platform.listener.AutoPublishListenerBeanPostProcessor"/>
+
+  <bean id="newSourceWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.source.NewSourceWizard"/>
+  <bean id="newSchemaWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.schema.NewSchemaWizard"/>
+  <bean id="fileListBinder" class="hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileListBinder"/>
+  <bean id="projectListBinder" class="hr.fer.zemris.vhdllab.platform.ui.wizard.support.ProjectListBinder"/>
+  <bean id="newTestbenchWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.NewTestbenchWizard"/>
+  <bean id="newAutomatonWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.NewAutomatonWizard"/>
+  <bean id="newProjectWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectWizard"/>
+  <bean id="newSimulationWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.NewSimulationWizard"/>
+  <bean id="confirmExitDialog" class="hr.fer.zemris.vhdllab.platform.support.ConfirmExitDialog"/>
+  <bean id="saveStandardStreamsOnShutdownListener" class="hr.fer.zemris.vhdllab.platform.log.SaveStandardStreamsOnShutdownListener"/>
+  <bean id="saveDialogManager" class="hr.fer.zemris.vhdllab.platform.gui.dialog.save.SaveDialogManager"/>
+  <bean id="confirmExitDialogManager" class="hr.fer.zemris.vhdllab.platform.manager.shutdown.ConfirmExitDialogManager"/>
+  <bean id="shutdownManager" class="hr.fer.zemris.vhdllab.platform.manager.shutdown.ShutdownManager"/>
+  <bean id="workspaceInitializer" class="hr.fer.zemris.vhdllab.platform.manager.workspace.support.WorkspaceInitializer"/>
+  <bean id="defaultWorkspaceManager" class="hr.fer.zemris.vhdllab.platform.manager.workspace.DefaultWorkspaceManager"/>
+  <bean id="saveEditorsOnShutdownListener" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.SaveEditorsOnShutdownListener"/>
+  <bean id="duplicateEntityBlockInSourceEditorDialogManager" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.DuplicateEntityBlockInSourceEditorDialogManager"/>
+  <bean id="wizardRegistry" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.WizardRegistry"/>
+  <bean id="defaultEditorContainer" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.DefaultEditorContainer"/>
+  <bean id="invalidEntityBlockInSourceEditorDialogManager" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.InvalidEntityBlockInSourceEditorDialogManager"/>
+  <bean id="editorRegistry" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.EditorRegistry"/>
+  <bean id="differentEntityNameDialogManager" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.DifferentEntityNameDialogManager"/>
+  <bean id="singleSaveDialogManager" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.SingleSaveDialogManager"/>
+  <bean id="defaultEditorManagerFactory" class="hr.fer.zemris.vhdllab.platform.manager.editor.impl.DefaultEditorManagerFactory"/>
+  <bean id="platformContainer" class="hr.fer.zemris.vhdllab.platform.manager.editor.PlatformContainer"/>
+  <bean id="defaultSimulationManager" class="hr.fer.zemris.vhdllab.platform.manager.simulation.DefaultSimulationManager"/>
+  <bean id="standaloneLocalizationSource" class="hr.fer.zemris.vhdllab.platform.i18n.StandaloneLocalizationSource"/>
+  <bean id="alreadyOpenedDialogManager" class="hr.fer.zemris.vhdllab.platform.javaws.AlreadyOpenedDialogManager"/>
+  <bean id="javawsIntegration" class="hr.fer.zemris.vhdllab.platform.javaws.JavawsIntegration"/>
+  <bean id="defaultPreferencesManager" class="hr.fer.zemris.vhdllab.platform.preference.DefaultPreferencesManager"/>
+  <bean id="databasePreferencesConfigurer" class="hr.fer.zemris.vhdllab.platform.preference.DatabasePreferencesConfigurer"/>
+  <bean id="flushPreferencesOnShutdownListener" class="hr.fer.zemris.vhdllab.platform.preference.FlushPreferencesOnShutdownListener"/>
+
+
+
   <aop:aspectj-autoproxy />
 
   <bean id="multiInstanceEditorManager"
@@ -84,7 +123,7 @@
     abstract="true">
     <property name="httpInvokerRequestExecutor" ref="httpClientRequestExceutor" />
   </bean>
-  
+
   <bean id="workspaceService" parent="httpInvokerBeanParent">
     <property name="serviceUrl"
       value="https://${host}:${port}/${context}/remoting/workspace.service" />
