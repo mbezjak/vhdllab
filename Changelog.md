@@ -1,3 +1,6 @@
+# 2.6.5 [2014-10-15]
+ * Compatibility with JRE8 without springframework 3.x baggage.
+
 # 2.6.4 [2014-10-13]
  * Compatibility with JRE8.
 
