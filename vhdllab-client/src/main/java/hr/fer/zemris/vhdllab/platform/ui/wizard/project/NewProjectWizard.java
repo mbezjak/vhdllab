@@ -22,10 +22,7 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractFormSupportingWizard;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NewProjectWizard extends AbstractFormSupportingWizard {
 
     @Autowired

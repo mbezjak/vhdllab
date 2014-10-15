@@ -29,14 +29,14 @@
   <!-- components -->
   <bean id="autoPublishListenerBeanPostProcessor" class="hr.fer.zemris.vhdllab.platform.listener.AutoPublishListenerBeanPostProcessor"/>
 
-  <bean id="newSourceWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.source.NewSourceWizard"/>
-  <bean id="newSchemaWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.schema.NewSchemaWizard"/>
+  <bean scope="prototype" id="newSourceWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.source.NewSourceWizard"/>
+  <bean scope="prototype" id="newSchemaWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.schema.NewSchemaWizard"/>
   <bean id="fileListBinder" class="hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileListBinder"/>
   <bean id="projectListBinder" class="hr.fer.zemris.vhdllab.platform.ui.wizard.support.ProjectListBinder"/>
-  <bean id="newTestbenchWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.NewTestbenchWizard"/>
-  <bean id="newAutomatonWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.NewAutomatonWizard"/>
-  <bean id="newProjectWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectWizard"/>
-  <bean id="newSimulationWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.NewSimulationWizard"/>
+  <bean scope="prototype" id="newTestbenchWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.testbench.NewTestbenchWizard"/>
+  <bean scope="prototype" id="newAutomatonWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.automaton.NewAutomatonWizard"/>
+  <bean scope="prototype" id="newProjectWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.project.NewProjectWizard"/>
+  <bean scope="prototype" id="newSimulationWizard" class="hr.fer.zemris.vhdllab.platform.ui.wizard.simulator.NewSimulationWizard"/>
   <bean id="confirmExitDialog" class="hr.fer.zemris.vhdllab.platform.support.ConfirmExitDialog"/>
   <bean id="saveStandardStreamsOnShutdownListener" class="hr.fer.zemris.vhdllab.platform.log.SaveStandardStreamsOnShutdownListener"/>
   <bean id="saveDialogManager" class="hr.fer.zemris.vhdllab.platform.gui.dialog.save.SaveDialogManager"/>

@@ -23,10 +23,6 @@ import hr.fer.zemris.vhdllab.platform.ui.wizard.support.FileForm;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.support.PortWizardPage;
 import hr.fer.zemris.vhdllab.service.ci.CircuitInterface;
 
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
-
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NewSourceWizard extends AbstractNewFileWizard {
 
     private FileForm fileForm;

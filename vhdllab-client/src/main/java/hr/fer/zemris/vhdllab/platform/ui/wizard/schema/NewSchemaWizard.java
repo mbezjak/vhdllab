@@ -37,10 +37,7 @@ import java.io.StringWriter;
 import java.util.HashSet;
 
 import org.apache.commons.lang.UnhandledException;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NewSchemaWizard extends AbstractNewFileWizard {
 
     private static final int MARGIN_OFFSET = Constants.GRID_SIZE * 2;

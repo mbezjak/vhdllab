@@ -20,11 +20,8 @@ import hr.fer.zemris.vhdllab.platform.manager.workspace.WorkspaceManager;
 import hr.fer.zemris.vhdllab.platform.ui.wizard.AbstractFormSupportingWizard;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.Scope;
 import org.springframework.richclient.form.Form;
 
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class NewSimulationWizard extends AbstractFormSupportingWizard {
 
     @Autowired
