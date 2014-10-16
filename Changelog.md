@@ -1,8 +1,11 @@
+# 2.6.6 [2014-10-16]
+ * Compatibility with JRE8 by fixing springframework 2.5.6 source code.
+
 # 2.6.5 [2014-10-15]
- * Compatibility with JRE8 without springframework 3.x baggage.
+ * Compatibility with JRE8 without springframework 3.x baggage by not using component-scan.
 
 # 2.6.4 [2014-10-13]
- * Compatibility with JRE8.
+ * Compatibility with JRE8 by upgrading to springframework 3.x.
 
 # 2.6.3 [2013-11-15]
  * Fix bug when MySQL is not configured to be case insensitive
