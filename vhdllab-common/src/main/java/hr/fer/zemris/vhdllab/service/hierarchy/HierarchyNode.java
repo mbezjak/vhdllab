@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ import hr.fer.zemris.vhdllab.util.EntityUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * Represents a hierarchy (dependency tree) node for one file. Hierarchy node
  * contains only basic information about the file (lightweight clone) and all
  * files that a file depends on (uses).
- * 
+ *
  * @author Miro Bezjak
  * @version 1.0
  * @since vhdllab2
@@ -47,7 +46,7 @@ public final class HierarchyNode implements Serializable {
      * does not implement readObject method as specified by Joshua Bloch,
      * "Effective Java: Programming Language Guide",
      * "Item 56: Write readObject methods defensively", page 166.
-     * 
+     *
      * The reason for this is that this class is used to transfer data from
      * server to client (reverse is not true). So by altering byte stream
      * attacker can only hurt himself!
@@ -62,7 +61,7 @@ public final class HierarchyNode implements Serializable {
     public HierarchyNode(File file, HierarchyNode parent) {
         Validate.notNull(file, "File can't be null");
         this.file = EntityUtils.lightweightClone(file);
-        this.dependencies = new HashSet<File>();
+        this.dependencies = new LinkedHashSet<File>();
         this.missingDependencies = new LinkedHashSet<String>();
         this.parent = parent;
         if (this.parent != null) {

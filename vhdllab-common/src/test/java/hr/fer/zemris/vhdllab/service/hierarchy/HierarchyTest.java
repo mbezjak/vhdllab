@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,8 +48,8 @@ public class HierarchyTest extends ValueObjectTestSupport {
     @Before
     public void initObject() {
         root = new HierarchyNode(new File("root", null, null), null);
-        right = new HierarchyNode(new File("right", null, null), root);
         left = new HierarchyNode(new File("left", null, null), root);
+        right = new HierarchyNode(new File("right", null, null), root);
         rightDep = new HierarchyNode(new File("right-dep", null, null), right);
         collection = new ArrayList<HierarchyNode>(4);
         collection.add(root);
@@ -83,8 +83,8 @@ public class HierarchyTest extends ValueObjectTestSupport {
 
         assertEquals(2, hierarchy.getBottomLevelNodes().size());
         Iterator<HierarchyNode> i = hierarchy.getBottomLevelNodes().iterator();
-        assertEquals(rightDep, i.next());
         assertEquals(left, i.next());
+        assertEquals(rightDep, i.next());
 
         assertEquals(4, hierarchy.getAllNodes().size());
     }
@@ -245,8 +245,8 @@ public class HierarchyTest extends ValueObjectTestSupport {
         Hierarchy clone = (Hierarchy) SerializationUtils.clone(hierarchy);
         Iterator<HierarchyNode> iterator = clone
                 .iteratorXUsedByYHierarchy(null);
-        assertEquals(rightDep, iterator.next());
         assertEquals(left, iterator.next());
+        assertEquals(rightDep, iterator.next());
         assertFalse(iterator.hasNext());
 
         iterator = clone.iteratorXUsedByYHierarchy(rightDep);

@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,9 +23,9 @@ import hr.fer.zemris.vhdllab.util.EntityUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,7 +89,7 @@ public final class Hierarchy implements Serializable {
     public Set<HierarchyNode> getDependenciesFor(HierarchyNode node) {
         Validate.notNull(node, "Hierarchy node can't be null");
         Set<File> nodeDependencies = node.getDependencies();
-        Set<HierarchyNode> dependencies = new HashSet<HierarchyNode>(
+        Set<HierarchyNode> dependencies = new LinkedHashSet<HierarchyNode>(
                 nodeDependencies.size());
         for (File f : nodeDependencies) {
             dependencies.add(nodes.get(f));
@@ -99,7 +99,7 @@ public final class Hierarchy implements Serializable {
 
     public Set<HierarchyNode> getParentsFor(HierarchyNode node) {
         Validate.notNull(node, "Hierarchy node can't be null");
-        Set<HierarchyNode> parents = new HashSet<HierarchyNode>();
+        Set<HierarchyNode> parents = new LinkedHashSet<HierarchyNode>();
         for (HierarchyNode n : nodes.values()) {
             if (n.getDependencies().contains(node.getFile())) {
                 parents.add(n);
@@ -157,8 +157,8 @@ public final class Hierarchy implements Serializable {
 
     private void initNodes() {
         Collection<HierarchyNode> allNodes = nodes.values();
-        topLevelNodes = new HashSet<HierarchyNode>(allNodes);
-        bottomLevelNodes = new HashSet<HierarchyNode>();
+        topLevelNodes = new LinkedHashSet<HierarchyNode>(allNodes);
+        bottomLevelNodes = new LinkedHashSet<HierarchyNode>();
         for (HierarchyNode n : allNodes) {
             if (!n.hasDependencies()) {
                 bottomLevelNodes.add(n);
