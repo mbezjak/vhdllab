@@ -1,3 +1,6 @@
+# 2.6.7 [2015-01-18]
+ * Unit tests can now be run on JDK8.
+
 # 2.6.6 [2014-10-16]
  * Compatibility with JRE8 by fixing springframework 2.5.6 source code.
 
