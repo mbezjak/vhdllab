@@ -76,7 +76,7 @@ system. For that reason, it's advisable to use the same entity/component names
 throughout VHDLLab editors.
 
 ## Install
-Unfortunately, current state of build system and lack of server side code
+Unfortunately, current state of the build system and the lack of server side code
 doesn't allow for pre-built WAR application. That might change sometime in the
 future. Until then, the only way to acquire WAR file is to build it from source.
 
@@ -96,7 +96,7 @@ it.
 
 4. Create MySQL database named `vhdllab` with all privileges. Appropriate
 database structure is created automatically by Hibernate the first time that
-server application is started. Note that database name can be changed in
+server application is started. Database name can be changed in
 `configuration.properties`.
 
 5. Start build in *production* profile by executing these commands in a command
@@ -106,14 +106,14 @@ line. This can take a while, because maven will try to download the Internet. :)
         $ mvn clean
         $ mvn -Pprod
 
-6. Root VHDLLab directory should now contain `vhdllab.war` file. Deploy it to
-Tomcat container.
+6. `vhdllab.war` file was generated in the root VHDLLab directory. Deploy it to
+Tomcat.
 
-7. End user installation is simple. Only requirement is JRE 6+. Assuming Tomcat
-is started on `localhost` at port `8080`, client application can be started by
-navigation to https://localhost:8080/vhdllab/launch.jnlp.
+7. End user (e.g. student) installation is simple. Only requirement is JRE 6+.
+Assuming Tomcat is started on `localhost` at port `8080`, client application can
+be started by navigation to https://localhost:8080/vhdllab/launch.jnlp.
 
-Note that while developing VHDLLab, there is no need to do steps 5. and 6. They
+Note that while developing VHDLLab, there is no need to do steps 5 and 6. They
 can take a long time. Instead `fast-deploy-jetty.sh` (or `.bat` in Microsoft
 Windows) can be used. The script will deploy server applcation in development
 mode much faster. Client application can be run or debugged directly from
