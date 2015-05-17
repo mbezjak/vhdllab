@@ -142,8 +142,29 @@ Server application can be viewed as an example of
 [SAAS](http://en.wikipedia.org/wiki/Software_as_a_Service).
 
 ### Statistics
-[cloc](http://cloc.sourceforge.net) reports roughly 600 Java files, 45,000 lines
-of code + 20,000 lines of comments + 13,000 blank lines.
+
+    $ date
+    Sun May 17 12:25:49 CEST 2015
+    $ cloc --exclude-dir=target .
+         728 text files.
+         727 unique files.
+          63 files ignored.
+
+    http://cloc.sourceforge.net v 1.62  T=1.32 s (507.5 files/s, 59715.5 lines/s)
+    -------------------------------------------------------------------------------
+    Language                     files          blank        comment           code
+    -------------------------------------------------------------------------------
+    Java                           620          12755          20025          41608
+    XML                             19            350            410           1706
+    Maven                            4             83            131            979
+    HTML                            15              0              0            356
+    SQL                              1             11             18             74
+    Bourne Shell                     7             18              9             56
+    YAML                             1              1              0              8
+    DOS Batch                        1              1              0              5
+    -------------------------------------------------------------------------------
+    SUM:                           668          13219          20593          44792
+    -------------------------------------------------------------------------------
 
 ### Requirements
 Client side is expected to have [JRE](http://java.com) 6+ and connectivity to
