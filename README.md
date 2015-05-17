@@ -54,8 +54,10 @@ or via [github] [ra-source].
  * Test circuits using testbench editor
  * Compile, simulate and view results
  * Projects, files and user preferences are stored on server (no manual
-   synchronization required when end user wants to work at different locations)
- * Dependency resolution for files
+   synchronization is required when end user wants to work from a different
+   location)
+ * File dependency resolution
+ * Hierarchical presentation of files in a project
  * VHDL source code generation from schematic, automaton or testbench files
  * Security (HTTPS, mandatory login, roles)
  * Auditing:
