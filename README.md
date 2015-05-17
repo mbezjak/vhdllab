@@ -34,7 +34,7 @@ Prokopec under supervision of mr.sc. Marko Čupić (now dr.sc.), was among the
 [winners] [ra-award] of University of Zagreb's Rector's Award in academic year
 2007/2008. Paper is [available] [ra-paper] online as a PDF in Croatian. Paper
 summary is available both in [Croatian] [ra-sum-hr] and in [English]
-[ra-sum-en]. As a backup those files are available in `award` directory. Source
+[ra-sum-en]. As a backup, those files are available in `award` directory. Source
 files can be obtained by `git checkout v1` then navigating to `rector` directory
 or via [github] [ra-source].
 
