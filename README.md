@@ -80,7 +80,8 @@ throughout VHDLLab editors.
 ## Install
 Unfortunately, current state of the build system and the lack of server side code
 doesn't allow for pre-built WAR application. That might change sometime in the
-future. Until then, the only way to acquire WAR file is to build it from source.
+future. Until then, the only way to acquire WAR file is to build it from source
+code.
 
 ### Build from Source Code
 Building requires JDK 6+ and Maven.
