@@ -51,9 +51,9 @@ ghdl.simulation.cmd=/usr/bin/ghdl --elab-run -Wc,-m32 -Wa,--gstabs -Wa,--32 -Wl,
 ### Keystore parameters                                                     ###
 ###############################################################################
 # Keystore is used both for SSL (HTTPS) and for signing vhdllab-client
-# application. It is imperative you use different keystore then one provided in
-# vhdllab-server/src/dev/devel-keystore. That keystore is very weak an should be
-# used only during development process.
+# application. It is imperative you use different keystore then the one provided
+# in vhdllab-server/src/dev/devel-keystore. That keystore is very weak an should
+# be used only during development process.
 #
 # Note: keystore location is relative to vhdllab-server directory. If you prefer
 # you can use absolute path.
