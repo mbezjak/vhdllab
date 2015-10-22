@@ -1,0 +1,25 @@
+allprojects  {
+    apply plugin: 'maven'
+
+    group = 'hr.fer.zemris.vhdllab'
+    version = '2.6.7'
+}
+
+subprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.5
+    targetCompatibility = 1.5
+
+
+    repositories {
+        mavenLocal()
+
+        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "http://maven.springframework.org/release/" }
+        maven { url "http://spring-rich-c.sourceforge.net/maven2repository" }
+        maven { url "http://repository.jboss.com/maven2/" }
+    }
+
+    configurations.all {
+    }
+}

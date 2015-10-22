@@ -1,7 +1,9 @@
 /configuration.properties
 /vhdllab.war
+/.gradle
 
 .settings/
 .classpath
 .project
 target/
+build/

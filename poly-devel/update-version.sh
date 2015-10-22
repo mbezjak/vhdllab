@@ -6,3 +6,4 @@ declare -r oldxml='<application.version>.\+</application.version>'
 declare -r newxml="<application.version>$version</application.version>"
 
 sed -i "s|$oldxml|$newxml|" pom.xml
+properties-set build.gradle version "'$version'"
