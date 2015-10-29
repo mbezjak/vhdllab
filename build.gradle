@@ -19,7 +19,4 @@ subprojects {
         maven { url "http://spring-rich-c.sourceforge.net/maven2repository" }
         maven { url "http://repository.jboss.com/maven2/" }
     }
-
-    configurations.all {
-    }
 }
