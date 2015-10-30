@@ -1,8 +1,8 @@
 rootProject.name = 'vhdllab'
 include ':vhdllab-common'
 include ':vhdllab-server'
-//include ':vhdllab-client'
+include ':vhdllab-client'
 
 project(':vhdllab-common').projectDir = new File(rootDir, 'vhdllab-common')
 project(':vhdllab-server').projectDir = new File(rootDir, 'vhdllab-server')
-//project(':vhdllab-client').projectDir = new File(rootDir, 'vhdllab-client')
+project(':vhdllab-client').projectDir = new File(rootDir, 'vhdllab-client')
