@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,12 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Defines common methods for manipulating entities. An entity is any object
  * that can be persisted by its data access object (DAO).
- * 
+ *
  * @param <T>
  *            type of an entity
- * @author Miro Bezjak
- * @version 1.0
- * @since vhdllab2
  */
 @Transactional
 public interface EntityDao<T> {
@@ -34,7 +31,7 @@ public interface EntityDao<T> {
     /**
      * Persists a new entity. All constraints are defined in entity itself
      * through hibernate-validator annotations.
-     * 
+     *
      * @param entity
      *            an entity that should be persisted
      * @throws NullPointerException
@@ -45,7 +42,7 @@ public interface EntityDao<T> {
     /**
      * Updates an existing entity. All constraints are defined in entity itself
      * through hibernate-validator annotations.
-     * 
+     *
      * @param entity
      *            an entity that should be updated
      * @throws NullPointerException
@@ -56,7 +53,7 @@ public interface EntityDao<T> {
     /**
      * Retrieves an entity with specified identifier. <code>null</code> value
      * will be returned if such entity doesn't exist.
-     * 
+     *
      * @param id
      *            identifier of an entity
      * @return an entity with specified identifier or <code>null</code> if such
@@ -68,7 +65,7 @@ public interface EntityDao<T> {
 
     /**
      * Deletes an entity.
-     * 
+     *
      * @param entity
      *            an entity to delete
      * @throws NullPointerException

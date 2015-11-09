@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +23,6 @@ import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 
-/**
- * Provides an implementation for {@link EntityDao}.
- * 
- * @param <T>
- *            type of an entity
- * @author Miro Bezjak
- * @version 1.0
- * @since vhdllab2
- */
 public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
         EntityDao<T> {
 
@@ -42,7 +33,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
 
     /**
      * Constructor.
-     * 
+     *
      * @param clazz
      *            class of an entity
      * @throws NullPointerException
@@ -55,7 +46,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see hr.fer.zemris.vhdllab.dao.EntityDao#persist(java.lang.Object)
      */
     public void persist(T entity) {
@@ -65,7 +56,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see hr.fer.zemris.vhdllab.dao.EntityDao#merge(java.lang.Object)
      */
     public T merge(T entity) {
@@ -75,7 +66,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see hr.fer.zemris.vhdllab.dao.EntityDao#load(java.lang.Integer)
      */
     @Override
@@ -86,7 +77,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see hr.fer.zemris.vhdllab.dao.EntityDao#delete(java.lang.Object)
      */
     @Override
@@ -98,7 +89,7 @@ public abstract class AbstractEntityDao<T> extends JpaDaoSupport implements
     /**
      * Returns a unique result for specified query string or <code>null</code>
      * if such entity doesn't exist.
-     * 
+     *
      * @param queryString
      *            a query to execute
      * @param values

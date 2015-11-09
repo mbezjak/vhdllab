@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -65,11 +65,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * A wrapper for GHDL (http://ghdl.free.fr/).
- * 
- * @author marcupic
- * @author Miro Bezjak
- * @version 1.0
- * @since vhdllab2
  */
 public class GhdlSimulator extends ServiceSupport implements Simulator {
 
@@ -224,7 +219,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
             String dep = missing.iterator().next();
             throw new CompilationException(node.getFile().getName() + " uses " + dep + " however that circuit doesn't exist. Neither compilation nor simulation can be run.");
         }
-        
+
         Set<HierarchyNode> dependencies = hierarchy.getDependenciesFor(node);
         for (HierarchyNode n : dependencies) {
             orderFileNames(ordered, hierarchy, n);
@@ -327,7 +322,7 @@ public class GhdlSimulator extends ServiceSupport implements Simulator {
          * destroy method, process terminates with exit code 143. And since we
          * manually ask watchdog if he killed the process, exit code 143 is
          * marked as successful (just so our code can be executed).
-         * 
+         *
          * Exit code 1 in case of compilation error(s).
          */
         executor.setExitValues(new int[] { 0, 1, 143 });

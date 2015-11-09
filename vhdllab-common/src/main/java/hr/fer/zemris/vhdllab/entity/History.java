@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,10 +42,6 @@ import org.hibernate.validator.NotNull;
  * Names of history entities are composed of original entity name plus
  * <i>History</i> suffix.
  * </p>
- * 
- * @author Miro Bezjak
- * @version 1.0
- * @since vhdllab2
  */
 @DeletedOnGreaterThenCreatedOnConstraint
 @Embeddable
@@ -93,7 +89,7 @@ public class History implements Serializable {
      * it has unique properties A and B. If such entity is created, then deleted
      * and created again insert version would be 2 and history table would show
      * all such changes. Insert versions start at 0.
-     * 
+     *
      * @return an insert version
      */
     public Integer getInsertVersion() {
@@ -113,7 +109,7 @@ public class History implements Serializable {
      * already has. But unlike version property, update version is manually set
      * and is not used for optimistic locking.
      * </p>
-     * 
+     *
      * @return an update version
      */
     public Integer getUpdateVersion() {
@@ -132,7 +128,7 @@ public class History implements Serializable {
      * (EntityObject#getVersion()) of <code>0</code> is the first history of an
      * entity an thus represents it's creation timestamp.
      * </p>
-     * 
+     *
      * @return a timestamp when an history was created
      */
     public Date getCreatedOn() {
@@ -146,7 +142,7 @@ public class History implements Serializable {
     /**
      * Returns a timestamp when an entity was deleted. Return value can be
      * <code>null</code> if entity still exists.
-     * 
+     *
      * @return a timestamp when an entity was deleted
      */
     public Date getDeletedOn() {

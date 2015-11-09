@@ -1,13 +1,13 @@
 /*******************************************************************************
  * See the NOTICE file distributed with this work for additional information
  * regarding copyright ownership.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,13 +34,6 @@ import org.hibernate.validator.InvalidStateException;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Tests for {@link HistoryDao}.
- * 
- * @author Miro Bezjak
- * @version 1.0
- * @since vhdllab2
- */
 public class HistoryDaoTest extends AbstractDaoSupport {
 
     public static final Date CREATED_ON;
@@ -138,7 +131,7 @@ public class HistoryDaoTest extends AbstractDaoSupport {
         entity = dao.load(entity.getId());
         assertEquals(DELETED_ON, entity.getHistory().getDeletedOn());
     }
-    
+
     /**
      * Insert version, update version and created on can't be updated.
      */

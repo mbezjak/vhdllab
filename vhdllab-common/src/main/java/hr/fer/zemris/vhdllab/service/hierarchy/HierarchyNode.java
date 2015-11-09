@@ -34,9 +34,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * contains only basic information about the file (lightweight clone) and all
  * files that a file depends on (uses).
  *
- * @author Miro Bezjak
- * @version 1.0
- * @since vhdllab2
  * @see EntityUtils#lightweightClone(File)
  */
 public final class HierarchyNode implements Serializable {
