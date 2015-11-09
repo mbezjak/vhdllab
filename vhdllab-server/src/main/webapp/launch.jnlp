@@ -3,7 +3,7 @@
             href="$$name" version="${application.version}">
 
     <information>
-        <title>VHDLLab2</title>
+        <title>VHDLLab</title>
         <vendor>FER Java team, University of Zagreb, Croatia</vendor>
         <homepage href="https://github.com/mbezjak/vhdllab" />
         <description kind="one-line">A web based IDE for VHDL.</description>
@@ -12,7 +12,7 @@
 
         <shortcut online="true">
             <desktop/>
-            <menu submenu="VHDLLab2"/>
+            <menu submenu="VHDLLab"/>
         </shortcut>
     </information>
 
