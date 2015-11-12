@@ -1,32 +1,32 @@
 dependencies {
     compile project(':vhdllab-common')
-    compile group: 'org.hibernate', name: 'hibernate-validator', version:'3.1.0.GA'
-    compile(group: 'org.hibernate', name: 'hibernate-annotations', version:'3.4.0.GA') {
+    compile 'org.hibernate:hibernate-validator:3.1.0.GA'
+    compile('org.hibernate:hibernate-annotations:3.4.0.GA') {
         exclude(module: 'dom4j')
     }
-    compile(group: 'org.springframework', name: 'spring-aspects', version:'2.5.6') {
+    compile('org.springframework:spring-aspects:2.5.6') {
         exclude(module: 'aspectjrt')
     }
-    compile group: 'org.springframework', name: 'spring-aop', version:'2.5.6'
-    compile group: 'org.springframework', name: 'spring-web', version:'2.5.6'
-    compile group: 'org.springframework', name: 'spring-tx', version:'2.5.6'
-    compile group: 'org.springframework.richclient', name: 'spring-richclient-core', version:'1.1.0'
-    compile group: 'org.springframework.richclient', name: 'spring-richclient-jdk6', version:'1.1.0'
-    compile group: 'org.springframework.richclient', name: 'spring-richclient-resources', version:'1.1.0'
-    compile group: 'org.springframework', name: 'spring-binding', version:'1.0'
-    compile group: 'com.jgoodies', name: 'looks', version:'2.2.1'
-    compile group: 'org.swinglabs', name: 'swingx', version:'0.9.5-2'
-    compile group: 'commons-cli', name: 'commons-cli', version:'1.2'
-    compile group: 'commons-httpclient', name: 'commons-httpclient', version:'3.1'
-    runtime(group: 'org.hibernate', name: 'hibernate-core', version:'3.3.2.GA') {
+    compile 'org.springframework:spring-aop:2.5.6'
+    compile 'org.springframework:spring-web:2.5.6'
+    compile 'org.springframework:spring-tx:2.5.6'
+    compile 'org.springframework.richclient:spring-richclient-core:1.1.0'
+    compile 'org.springframework.richclient:spring-richclient-jdk6:1.1.0'
+    compile 'org.springframework.richclient:spring-richclient-resources:1.1.0'
+    compile 'org.springframework:spring-binding:1.0'
+    compile 'com.jgoodies:looks:2.2.1'
+    compile 'org.swinglabs:swingx:0.9.5-2'
+    compile 'commons-cli:commons-cli:1.2'
+    compile 'commons-httpclient:commons-httpclient:3.1'
+    runtime('org.hibernate:hibernate-core:3.3.2.GA') {
         exclude(module: 'dom4j')
         exclude(module: 'jta')
         exclude(module: 'antlr')
     }
-    runtime group: 'org.slf4j', name: 'slf4j-log4j12', version:'1.6.1'
-    testCompile group: 'junit', name: 'junit', version:'4.4'
-    testCompile group: 'org.springframework', name: 'spring-test', version:'2.5.6'
-    compile(group: 'javax.jnlp', name: 'jnlp-api', version:'1.5') {
+    runtime 'org.slf4j:slf4j-log4j12:1.6.1'
+    testCompile 'junit:junit:4.4'
+    testCompile 'org.springframework:spring-test:2.5.6'
+    compile('javax.jnlp:jnlp-api:1.5') {
         /* This dependency was originally in the Maven provided scope, but the project was not of type war.
            This behavior is not yet supported by Gradle, so this dependency has been converted to a compile dependency.
            Please review and delete this closure when resolved. */
