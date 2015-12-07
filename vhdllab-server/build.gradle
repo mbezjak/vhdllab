@@ -8,6 +8,8 @@ dependencies {
     compile 'org.springframework:spring-aspects:2.5.6', { exclude(module: 'aspectjrt') }
     compile 'org.springframework:spring-orm:2.5.6'
     compile 'org.springframework:spring-jdbc:2.5.6'
+
+    compile 'org.springframework:spring-aop:2.5.6' // override spring-security-core
     compile 'org.springframework.security:spring-security-core:2.0.5.RELEASE', { exclude(module: 'spring-support') }
 
     // http://stackoverflow.com/questions/10482563/aop-java-lang-illegalargumentexception-error-at-0-cant-find-referenced-poi
