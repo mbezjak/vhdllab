@@ -17,11 +17,11 @@ dependencies {
 
     compile 'org.springframework:spring-aop:2.5.6' // override spring-security-core
     compile 'org.springframework.security:spring-security-core:2.0.5.RELEASE', { exclude(module: 'spring-support') }
-
-    // http://stackoverflow.com/questions/10482563/aop-java-lang-illegalargumentexception-error-at-0-cant-find-referenced-poi
     compile 'jaxen:jaxen:1.1.1'
 
+    // http://stackoverflow.com/questions/10482563/aop-java-lang-illegalargumentexception-error-at-0-cant-find-referenced-poi
     compile 'org.aspectj:aspectjweaver:1.7.3'
+
     compile 'org.apache.commons:commons-exec:1.1'
     providedCompile 'javax.servlet:servlet-api:2.5'
     runtime 'org.hibernate:hibernate-ehcache:3.3.2.GA'
