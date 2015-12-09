@@ -1,4 +1,7 @@
 apply plugin: 'war'
+apply plugin: 'jetty'
+
+war.archiveName = 'vhdllab.war'
 
 configurations.all {
     resolutionStrategy {
