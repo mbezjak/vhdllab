@@ -20,3 +20,12 @@ subprojects {
         maven { url "http://repository.jboss.com/maven2/" }
     }
 }
+
+def configurationPropertiesFile = project.file('configuration.properties')
+if (configurationPropertiesFile.isFile()) {
+    def configurationProperties = new Properties()
+    configurationProperties.load(new FileReader(configurationPropertiesFile))
+    configurationProperties.each { key, value ->
+        project.ext.set(key, value)
+    }
+}
