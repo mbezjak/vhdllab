@@ -3,14 +3,27 @@ apply plugin: 'jetty'
 
 war.archiveName = 'vhdllab.war'
 
+def fromRootProjectProperty = { name ->
+    { line -> line.replace('${' + name + '}', rootProject.ext[name]) }
+}
+
 processResources.doFirst {
     if (project.ext.has('ghdl.tmp.dir')) {
-        filter { line -> line.replace('${ghdl.tmp.dir}', rootProject.ext['ghdl.tmp.dir']) }
+        filter fromRootProjectProperty('ghdl.tmp.dir')
     }
-    filter { line -> line.replace('${ghdl.compilation.cmd}', rootProject.ext['ghdl.compilation.cmd']) }
-    filter { line -> line.replace('${ghdl.simulation.cmd}', rootProject.ext['ghdl.simulation.cmd']) }
+    filter fromRootProjectProperty('ghdl.compilation.cmd')
+    filter fromRootProjectProperty('ghdl.simulation.cmd')
+    filter fromRootProjectProperty('app.context')
+}
 
-    filter { line -> line.replace('${app.context}', rootProject.ext['app.context']) }
+war {
+    filter fromRootProjectProperty('app.host')
+    filter fromRootProjectProperty('app.context')
+    filter fromRootProjectProperty('http.port')
+    filter fromRootProjectProperty('database.connection.url')
+    filter fromRootProjectProperty('database.connection.username')
+    filter fromRootProjectProperty('database.connection.password')
+    filter { line -> line.replace('${application.version}', rootProject.version) }
 }
 
 configurations.all {
