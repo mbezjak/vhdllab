@@ -53,6 +53,7 @@ dependencies {
     runtime 'org.hibernate:hibernate-ehcache:3.3.2.GA'
     runtime 'commons-dbcp:commons-dbcp:1.4'
     runtime 'mysql:mysql-connector-java:5.1.13'
+    runtime 'hsqldb:hsqldb:1.8.0.7' // easier development
 
     // JNLP Download Servlet
     runtime 'org.codehaus.mojo.webstart:webstart-jnlp-servlet:1.0-6.0-02_ea_b02'
