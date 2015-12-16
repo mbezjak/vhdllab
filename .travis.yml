@@ -13,4 +13,4 @@ before_script:
   - cp configuration.properties-sample configuration.properties
 
 script:
-  - apache-maven-2.2.1/bin/mvn
+  - M2_HOME=apache-maven-2.2.1 apache-maven-2.2.1/bin/mvn
