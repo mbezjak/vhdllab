@@ -5,8 +5,12 @@ jdk:
   - oraclejdk7
   - oraclejdk8
 
-before_install: cp configuration.properties-sample configuration.properties
+install:
+  - wget http://archive.apache.org/dist/maven/binaries/apache-maven-2.2.1-bin.tar.gz
+  - tar -xf apache-maven-2.2.1-bin.tar.gz
+
+before_script:
+  - cp configuration.properties-sample configuration.properties
+
 script:
- - wget http://archive.apache.org/dist/maven/binaries/apache-maven-2.2.1-bin.tar.gz
- - tar -xf apache-maven-2.2.1.bin.tar.gz
- - apache-maven-2.2.1/bin/mvn
+  - apache-maven-2.2.1/bin/mvn
