@@ -68,6 +68,16 @@ keystore.keypassword=vhdllab
 ###############################################################################
 ### Database parameters                                                     ###
 ###############################################################################
-database.connection.url=jdbc:mysql://localhost:3306/vhdllab
-database.connection.username=username
-database.connection.password=password
+# mysql
+#database.connection.driver=com.mysql.jdbc.Driver
+#database.connection.url=jdbc:mysql://localhost:3306/vhdllab
+#database.connection.username=username
+#database.connection.password=password
+#database.connection.validationQuery=SELECT 1
+
+# hsqldb
+database.connection.driver=org.hsqldb.jdbcDriver
+database.connection.url=jdbc:hsqldb:mem:vhdllab
+database.connection.username=sa
+database.connection.password=
+database.connection.validationQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
