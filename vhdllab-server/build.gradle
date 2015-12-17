@@ -28,6 +28,15 @@ war {
     filter { line -> line.replace('${application.version}', rootProject.version) }
 }
 
+sourceSets {
+    main {
+        resources {
+            def env = project.ext.has('prod') ? 'prod' : 'dev'
+            srcDir "src/log4j/$env"
+        }
+    }
+}
+
 configurations.all {
     resolutionStrategy {
         force 'xml-apis:xml-apis:1.4.01'
