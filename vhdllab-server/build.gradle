@@ -74,3 +74,13 @@ dependencies {
     testCompile 'org.springframework:spring-test:2.5.6'
     testCompile 'hsqldb:hsqldb:1.8.0.7'
 }
+
+task copyWarToRootProject(type: Copy, dependsOn: 'war') {
+    from libsDir
+    include '*.war'
+    into rootProject.projectDir
+}
+
+if (project.ext.has('prod')) {
+    build.finalizedBy copyWarToRootProject
+}
