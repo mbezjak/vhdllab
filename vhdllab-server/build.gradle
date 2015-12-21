@@ -26,6 +26,8 @@ war {
     filter fromRootProjectProperty('database.connection.password')
     filter fromRootProjectProperty('database.connection.validationQuery')
     filter { line -> line.replace('${application.version}', rootProject.version) }
+
+    from "$buildDir/signing"
 }
 
 sourceSets {
@@ -35,6 +37,10 @@ sourceSets {
             srcDir "src/log4j/$env"
         }
     }
+}
+
+configurations {
+    andPack200
 }
 
 configurations.all {
@@ -73,9 +79,11 @@ dependencies {
     testCompile 'junit:junit:4.4'
     testCompile 'org.springframework:spring-test:2.5.6'
     testCompile 'hsqldb:hsqldb:1.8.0.7'
+
+    andPack200 'org.codehaus.mojo.webstart:webstart-pack200-anttasks:1.2'
 }
 
-task copyWarToRootProject(type: Copy, dependsOn: 'war') {
+task('copyWarToRootProject', type: Copy, dependsOn: war) {
     from libsDir
     include '*.war'
     into rootProject.projectDir
@@ -83,4 +91,64 @@ task copyWarToRootProject(type: Copy, dependsOn: 'war') {
 
 if (project.ext.has('prod')) {
     build.finalizedBy copyWarToRootProject
+}
+
+task('pack200AndSign', dependsOn: ':vhdllab-client:shadowJar') {
+    ant.taskdef(
+        name: 'pack200',
+        classname: 'com.sun.tools.apache.ant.pack200.Pack200Task',
+        classpath: configurations.andPack200.asPath
+    )
+
+    /**
+     * pack200 segment size is set to -1 because of bug 5078608
+     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5078608
+     * It seems that this bug is still opened.
+     * Environment is: linux 32bit, java 1.6.0_10-b33
+     */
+    ant.property(name: 'segmentlimit', value: '-1')
+
+    def baseName = project(':vhdllab-client').shadowJar.baseName
+    def destName = "$buildDir/signing/${baseName}.jar"
+
+    copy {
+        from project(':vhdllab-client').libsDir
+        include baseName + '*'
+        rename "^$baseName.*", "${baseName}.jar"
+        into "$buildDir/signing"
+    }
+
+    /**
+     * Note: for this to work, repacking destfile must be different from src
+     * otherwise Pack (packing task found in standard ant) claims that file is
+     * up to date so it won't execute pack200 task. Therefor, this pack and
+     * following move tasks are in place to prevent up to date from Pack.
+     */
+    def changedName = "$buildDir/signing/${baseName}.changed.jar"
+    ant.pack200(
+        src: destName,
+        destfile: changedName,
+        repack: 'true',
+        segmentlimit: ant.properties.segmentlimit
+    )
+    assert file(changedName).renameTo(destName)
+
+    ant.signjar(
+        jar: destName,
+        keystore : rootProject.ext['keystore.location'],
+        alias : rootProject.ext['keystore.alias'],
+        storepass : rootProject.ext['keystore.password'],
+        keypass : rootProject.ext['keystore.keypassword'],
+    )
+
+    ant.pack200(
+        src: destName,
+        destfile: "${destName}.pack.gz",
+        gzipoutput: "true",
+        segmentlimit: ant.properties.segmentlimit
+    )
+}
+
+if (project.ext.has('prod')) {
+    war.dependsOn pack200AndSign
 }

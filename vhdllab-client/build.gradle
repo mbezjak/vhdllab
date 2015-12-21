@@ -1,3 +1,7 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.2'
+}
+
 configurations {
     provided
 }
@@ -37,4 +41,8 @@ dependencies {
     testCompile 'junit:junit:4.4'
     testCompile 'org.springframework:spring-test:2.5.6'
     provided 'javax.jnlp:jnlp-api:1.5'
+}
+
+shadowJar {
+    baseName = 'vhdllab-client-with-deps'
 }
