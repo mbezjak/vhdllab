@@ -23,10 +23,12 @@ dependencies {
     }
     compile 'org.springframework:spring-aop:2.5.6'
     compile 'org.springframework:spring-web:2.5.6'
-    compile 'org.springframework:spring-tx:2.5.6'
+    compile 'org.springframework:spring-tx:2.5.6' // for exception hierarchy (DataAccessException)
     compile 'org.springframework.richclient:spring-richclient-core:1.1.0'
     compile 'org.springframework.richclient:spring-richclient-jdk6:1.1.0'
     compile 'org.springframework.richclient:spring-richclient-resources:1.1.0'
+    // spring-binding 1.0 because of a bug in ListBinding (catching
+    // IllegalArgumentException instead of ConversionException)
     compile 'org.springframework:spring-binding:1.0'
     compile 'com.jgoodies:looks:2.2.1'
     compile 'org.swinglabs:swingx:0.9.5-2'
