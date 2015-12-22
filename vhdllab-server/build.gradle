@@ -83,17 +83,19 @@ dependencies {
     andPack200 'org.codehaus.mojo.webstart:webstart-pack200-anttasks:1.2'
 }
 
-task('copyWarToRootProject', type: Copy, dependsOn: war) {
-    from libsDir
-    include '*.war'
-    into rootProject.projectDir
+task copyWarToRootProject(dependsOn: war) << {
+    copy {
+        from libsDir
+        include '*.war'
+        into rootProject.projectDir
+    }
 }
 
 if (project.ext.has('prod')) {
     build.finalizedBy copyWarToRootProject
 }
 
-task('pack200AndSign', dependsOn: ':vhdllab-client:shadowJar') {
+task pack200AndSign(dependsOn: ':vhdllab-client:shadowJar') << {
     ant.taskdef(
         name: 'pack200',
         classname: 'com.sun.tools.apache.ant.pack200.Pack200Task',
