@@ -83,6 +83,10 @@ dependencies {
     andPack200 'org.codehaus.mojo.webstart:webstart-pack200-anttasks:1.2'
 }
 
+clean {
+    delete rootProject.file(war.archiveName)
+}
+
 task copyWarToRootProject(dependsOn: war) << {
     copy {
         from libsDir
