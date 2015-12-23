@@ -2,8 +2,23 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
+jar {
+    manifest {
+        from 'src/main/resources/META-INF/MANIFEST.MF'
+    }
+}
+
+shadowJar {
+    baseName = 'vhdllab-client-with-deps'
+}
+
 configurations {
     provided
+    runtime {
+        exclude module: 'antlr'
+        exclude module: 'dom4j'
+        exclude module: 'jta'
+    }
 }
 
 sourceSets {
@@ -16,41 +31,34 @@ sourceSets {
 }
 
 dependencies {
-    compile(project(':vhdllab-common')) {
-        exclude(module: 'hibernate-validator')
-        exclude(module: 'hibernate-annotations')
-    }
+    compile project(':vhdllab-common')
     compile 'org.hibernate:hibernate-validator:3.1.0.GA'
-    compile('org.hibernate:hibernate-annotations:3.4.0.GA') {
-        exclude(module: 'dom4j')
-    }
+    compile 'org.hibernate:hibernate-annotations:3.4.0.GA'
     compile('org.springframework:spring-aspects:2.5.6') {
         exclude(module: 'aspectjrt')
     }
+    compile 'org.aspectj:aspectjweaver:1.6.12'
     compile 'org.springframework:spring-aop:2.5.6'
     compile 'org.springframework:spring-web:2.5.6'
     compile 'org.springframework:spring-tx:2.5.6' // for exception hierarchy (DataAccessException)
+    // spring-binding 1.0 because of a bug in ListBinding (catching
+    // IllegalArgumentException instead of ConversionException)
+    compile 'org.springframework:spring-binding:1.0', {
+        force = true
+    }
     compile 'org.springframework.richclient:spring-richclient-core:1.1.0'
     compile 'org.springframework.richclient:spring-richclient-jdk6:1.1.0'
     compile 'org.springframework.richclient:spring-richclient-resources:1.1.0'
-    // spring-binding 1.0 because of a bug in ListBinding (catching
-    // IllegalArgumentException instead of ConversionException)
-    compile 'org.springframework:spring-binding:1.0'
     compile 'com.jgoodies:looks:2.2.1'
     compile 'org.swinglabs:swingx:0.9.5-2'
     compile 'commons-cli:commons-cli:1.2'
     compile 'commons-httpclient:commons-httpclient:3.1'
-    runtime('org.hibernate:hibernate-core:3.3.2.GA') {
-        exclude(module: 'dom4j')
-        exclude(module: 'jta')
-        exclude(module: 'antlr')
+    runtime 'org.hibernate:hibernate-core:3.3.2.GA'
+    runtime 'log4j:log4j:1.2.14', {
+        force = true // maven resolves 1.2.14 instead of 1.2.16
     }
     runtime 'org.slf4j:slf4j-log4j12:1.6.1'
     testCompile 'junit:junit:4.4'
     testCompile 'org.springframework:spring-test:2.5.6'
     provided 'javax.jnlp:jnlp-api:1.5'
-}
-
-shadowJar {
-    baseName = 'vhdllab-client-with-deps'
 }
