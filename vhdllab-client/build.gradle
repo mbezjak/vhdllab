@@ -2,16 +2,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
-jar {
-    manifest {
-        from 'src/main/resources/META-INF/MANIFEST.MF'
-    }
-}
-
-shadowJar {
-    baseName = 'vhdllab-client-with-deps'
-}
-
 configurations {
     provided
     runtime {
@@ -28,6 +18,29 @@ sourceSets {
             srcDir 'src/main/images'
         }
     }
+}
+
+def fromRootProjectProperty = { name ->
+    { line -> line.replace('${' + name + '}', rootProject.ext[name]) }
+}
+
+processResources.doFirst {
+    from('src/main/resources') {
+        filter fromRootProjectProperty('app.host')
+        filter fromRootProjectProperty('app.context')
+        filter fromRootProjectProperty('https.port')
+        filter { line -> line.replace('${version}', rootProject.version) }
+    }
+}
+
+jar {
+    manifest {
+        from 'src/main/resources/META-INF/MANIFEST.MF'
+    }
+}
+
+shadowJar {
+    baseName = 'vhdllab-client-with-deps'
 }
 
 dependencies {
