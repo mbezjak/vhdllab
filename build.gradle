@@ -10,6 +10,9 @@ subprojects {
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'utf-8'
+    }
 
     repositories {
         mavenLocal()
