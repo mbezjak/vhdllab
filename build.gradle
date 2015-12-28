@@ -3,6 +3,8 @@ allprojects  {
 
     group = 'hr.fer.zemris.vhdllab'
     version = '2.6.7'
+
+    defaultTasks 'clean', 'build'
 }
 
 subprojects {
