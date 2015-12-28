@@ -26,6 +26,19 @@ subprojects {
     }
 }
 
+description = """
+    VHDLLab is a web based IDE for VHDL (programming language). It is designed
+    for educational purpose as an alternative for commercial products that
+    provide solutions for VHDL. The need for VHDLLab appeared at Faculty of
+    Electrical Engineering and Computing, University of Zagreb, Croatia when
+    VHDL was taught in Digital Electronics course. Originally WebISE was used by
+    students when programming VHDL code. But WebISE has many problems (huge
+    footprint, unnecessary features, inability to create automatons, lots of
+    bugs, problems with license that disallows universities to distribute
+    program, etc.). VHDLLab was designed as a lightweight alternative to fix
+    those problems and add few other features.
+""".stripIndent().trim()
+
 def configurationPropertiesFile = project.file('configuration.properties')
 if (configurationPropertiesFile.isFile()) {
     def configurationProperties = new Properties()
