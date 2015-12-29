@@ -40,7 +40,7 @@ sourceSets {
 }
 
 configurations {
-    andPack200
+    antPack200
 }
 
 configurations.all {
@@ -85,7 +85,7 @@ dependencies {
     testCompile 'org.springframework:spring-test:2.5.6'
     testCompile 'hsqldb:hsqldb:1.8.0.7'
 
-    andPack200 'org.codehaus.mojo.webstart:webstart-pack200-anttasks:1.2'
+    antPack200 'org.codehaus.mojo.webstart:webstart-pack200-anttasks:1.2'
 }
 
 clean {
@@ -108,7 +108,7 @@ task pack200AndSign(dependsOn: ':vhdllab-client:shadowJar') << {
     ant.taskdef(
         name: 'pack200',
         classname: 'com.sun.tools.apache.ant.pack200.Pack200Task',
-        classpath: configurations.andPack200.asPath
+        classpath: configurations.antPack200.asPath
     )
 
     /**
