@@ -16,6 +16,12 @@ subprojects {
         options.encoding = 'utf-8'
     }
 
+    tasks.withType(Javadoc) {
+        options {
+            links "http://java.sun.com/javase/6/docs/api/"
+        }
+    }
+
     repositories {
         mavenLocal()
 
