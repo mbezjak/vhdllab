@@ -1,5 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:1.2.4'
+    }
+}
+
 apply plugin: 'war'
-apply plugin: 'jetty'
+apply plugin: 'org.akhikhl.gretty'
 
 war.archiveName = 'vhdllab.war'
 
@@ -162,4 +172,11 @@ task pack200AndSign(dependsOn: ':vhdllab-client:shadowJar') << {
 
 if (project.ext.has('prod')) {
     war.dependsOn pack200AndSign
+}
+
+gretty {
+    servletContainer = 'jetty8'
+    contextPath = '/vhdllab'
+    realm 'Preauth Realm'
+    realmConfigFile 'src/dev/realm.properties'
 }
