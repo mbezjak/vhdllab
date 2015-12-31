@@ -27,15 +27,17 @@ processResources.doFirst {
 }
 
 war {
-    filter fromRootProjectProperty('app.host')
-    filter fromRootProjectProperty('app.context')
-    filter fromRootProjectProperty('http.port')
-    filter fromRootProjectProperty('database.connection.driver')
-    filter fromRootProjectProperty('database.connection.url')
-    filter fromRootProjectProperty('database.connection.username')
-    filter fromRootProjectProperty('database.connection.password')
-    filter fromRootProjectProperty('database.connection.validationQuery')
-    filter { line -> line.replace('${application.version}', rootProject.version) }
+    from('src/main/webapp') {
+        filter fromRootProjectProperty('app.host')
+        filter fromRootProjectProperty('app.context')
+        filter fromRootProjectProperty('http.port')
+        filter fromRootProjectProperty('database.connection.driver')
+        filter fromRootProjectProperty('database.connection.url')
+        filter fromRootProjectProperty('database.connection.username')
+        filter fromRootProjectProperty('database.connection.password')
+        filter fromRootProjectProperty('database.connection.validationQuery')
+        filter { line -> line.replace('${application.version}', rootProject.version) }
+    }
 
     from "$buildDir/signing"
 }
