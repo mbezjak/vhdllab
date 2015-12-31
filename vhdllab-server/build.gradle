@@ -179,4 +179,5 @@ gretty {
     contextPath = '/vhdllab'
     realm 'Preauth Realm'
     realmConfigFile 'src/dev/realm.properties'
+    logDir "$buildDir/logs"
 }
