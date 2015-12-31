@@ -181,4 +181,8 @@ gretty {
     realm 'Preauth Realm'
     realmConfigFile 'src/dev/realm.properties'
     logDir "$buildDir/logs"
+    httpsEnabled true
+    sslKeyStorePath file('src/dev/devel-keystore')
+    sslKeyStorePassword 'vhdllab'
+    sslKeyManagerPassword 'vhdllab'
 }
