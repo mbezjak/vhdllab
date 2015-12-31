@@ -9,6 +9,9 @@ allprojects  {
 
 subprojects {
     apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+
     sourceCompatibility = 1.5
     targetCompatibility = 1.5
 
