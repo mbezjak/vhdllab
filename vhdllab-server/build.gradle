@@ -51,6 +51,9 @@ sourceSets {
 
 configurations {
     antPack200
+    testCompile {
+        exclude module: 'javax.servlet-api' // servlet api 3.0
+    }
 }
 
 configurations.all {
