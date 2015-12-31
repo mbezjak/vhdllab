@@ -72,8 +72,9 @@ dependencies {
     compile 'org.springframework.security:spring-security-core:2.0.5.RELEASE', { exclude(module: 'spring-support') }
     compile 'jaxen:jaxen:1.1.1'
 
+    // http://mail-archives.apache.org/mod_mbox/cocoon-dev/201108.mbox/%3C4E56D857.8060608@indoqa.com%3E
     // http://stackoverflow.com/questions/10482563/aop-java-lang-illegalargumentexception-error-at-0-cant-find-referenced-poi
-    compile 'org.aspectj:aspectjweaver:1.7.3'
+    compile 'org.aspectj:aspectjweaver:1.6.6'
 
     compile 'org.apache.commons:commons-exec:1.1'
     providedCompile 'javax.servlet:servlet-api:2.5'
