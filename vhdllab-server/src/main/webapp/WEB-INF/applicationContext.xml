@@ -40,7 +40,7 @@
     <property name="maxWait" value="5000" />
     <property name="testOnBorrow" value="true" />
     <property name="testOnReturn" value="false" />
-    <property name="validationQuery" value="${datasource.validationQuery}" /> <!-- MySQL valid -->
+    <property name="validationQuery" value="${datasource.validationQuery}" />
     <property name="poolPreparedStatements" value="true" />
     <property name="maxOpenPreparedStatements" value="20" />
   </bean>
@@ -51,7 +51,7 @@
     <property name="jpaVendorAdapter">
       <bean
         class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="database" value="MYSQL" />
+        <property name="databasePlatform" value="${datasource.dialect}" />
         <property name="showSql" value="false" />
       </bean>
     </property>

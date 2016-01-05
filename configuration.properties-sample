@@ -74,6 +74,7 @@ keystore.keypassword=vhdllab
 #database.connection.username=username
 #database.connection.password=password
 #database.connection.validationQuery=SELECT 1
+#database.connection.dialect=org.hibernate.dialect.MySQLDialect
 
 # hsqldb
 database.connection.driver=org.hsqldb.jdbcDriver
@@ -81,3 +82,4 @@ database.connection.url=jdbc:hsqldb:mem:vhdllab
 database.connection.username=sa
 database.connection.password=
 database.connection.validationQuery=SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS
+database.connection.dialect=hr.fer.zemris.vhdllab.dao.impl.support.CaseInsensitiveHSQLDialect

@@ -36,6 +36,7 @@ war {
         filter fromRootProjectProperty('database.connection.username')
         filter fromRootProjectProperty('database.connection.password')
         filter fromRootProjectProperty('database.connection.validationQuery')
+        filter fromRootProjectProperty('database.connection.dialect')
         filter { line -> line.replace('${application.version}', rootProject.version) }
     }
 
