@@ -79,7 +79,20 @@ dependencies {
 }
 
 eclipse {
+    jdt {
+        sourceCompatibility = 1.7
+        targetCompatibility = 1.7
+    }
+
     classpath {
         plusConfigurations += [ configurations.provided ]
+        file {
+            whenMerged { classpath ->
+                def resources = classpath.entries.find {
+                    it.kind == 'src' && it.path == 'src/main/resources'
+                }
+                resources.path = 'build/resources/main'
+            }
+        }
     }
 }
