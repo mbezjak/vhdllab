@@ -5,12 +5,8 @@ jdk:
   - oraclejdk7
   - oraclejdk8
 
-install:
-  - wget http://archive.apache.org/dist/maven/binaries/apache-maven-2.2.1-bin.tar.gz
-  - tar -xf apache-maven-2.2.1-bin.tar.gz
-
 before_script:
   - cp configuration.properties-sample configuration.properties
 
 script:
-  - M2_HOME=apache-maven-2.2.1 apache-maven-2.2.1/bin/mvn
+  - ./gradle build

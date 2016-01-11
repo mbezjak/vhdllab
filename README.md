@@ -84,7 +84,7 @@ future. Until then, the only way to acquire WAR file is to build it from source
 code.
 
 ### Build from Source Code
-Building requires JDK 6+ and Maven.
+Building requires JDK 6+.
 
 1. Download and install [GHDL](http://ghdl.free.fr).
 
@@ -102,12 +102,9 @@ database structure is created automatically by Hibernate the first time that
 server application is started. Database name can be changed in
 `configuration.properties`.
 
-5. Start build in *production* profile by executing these commands in a command
-line. This can take a while, because maven will try to download the Internet. :)
+5. Start build in *production* profile by executing:
 
-        $ mvn clean install
-        $ mvn clean
-        $ mvn -Pprod
+        $ ./gradle -Pprod clean build
 
 6. `vhdllab.war` file was generated in the root VHDLLab directory. Deploy it to
 Tomcat.
@@ -117,10 +114,9 @@ Assuming Tomcat is started on `localhost` at port `8080`, client application can
 be started by navigation to https://localhost:8080/vhdllab/launch.jnlp.
 
 Note that while developing VHDLLab, there is no need to do steps 5 and 6. They
-can take a long time. Instead `fast-deploy-jetty.sh` (or `.bat` in Microsoft
-Windows) can be used. The script will deploy server applcation in development
-mode much faster. Client application can be run or debugged directly from
-Eclipse by executing
+can take a long time. Instead you can run the server in embedded jetty server
+with `./gradle appRunWar`. Client application can then be run or debugged
+directly from Eclipse by executing
 `vhdllab-client/src/main/java/hr/fer/zemris/vhdllab/platform/Main.java`.
 
 ## Technical Description
@@ -145,27 +141,28 @@ Server application can be viewed as an example of
 ### Statistics
 
     $ date
-    Sun May 17 12:25:49 CEST 2015
-    $ cloc --exclude-dir=target .
-         728 text files.
-         727 unique files.
-          63 files ignored.
+    Mon Jan 11 11:20:28 CET 2016
+    $ cloc --exclude-dir=build .
+         743 text files.
+         732 unique files.
+          78 files ignored.
 
-    http://cloc.sourceforge.net v 1.62  T=1.32 s (507.5 files/s, 59715.5 lines/s)
-    -------------------------------------------------------------------------------
-    Language                     files          blank        comment           code
-    -------------------------------------------------------------------------------
-    Java                           620          12755          20025          41608
-    XML                             19            350            410           1706
-    Maven                            4             83            131            979
-    HTML                            15              0              0            356
-    SQL                              1             11             18             74
-    Bourne Shell                     7             18              9             56
-    YAML                             1              1              0              8
-    DOS Batch                        1              1              0              5
-    -------------------------------------------------------------------------------
-    SUM:                           668          13219          20593          44792
-    -------------------------------------------------------------------------------
+    http://cloc.sourceforge.net v 1.64  T=2.40 s (278.0 files/s, 32370.1 lines/s)
+    --------------------------------------------------------------------------------
+    Language                      files          blank        comment           code
+    --------------------------------------------------------------------------------
+    Java                            620          12755          19804          41607
+    XML                              19            350            410           1706
+    HTML                             15              0              0            356
+    Groovy                            5             49             20            300
+    Bourne Again Shell                1             19             20            121
+    SQL                               1             11             18             74
+    DOS Batch                         1             24              2             64
+    Bourne Shell                      5             10              8             31
+    YAML                              1              3              0             13
+    --------------------------------------------------------------------------------
+    SUM:                            668          13221          20282          44272
+    --------------------------------------------------------------------------------
 
 ### Requirements
 Client side is expected to have [JRE](http://java.com) 6+ and connectivity to
@@ -178,7 +175,7 @@ Server side requirements are as follows:
  * [MySQL](http://www.mysql.com) 5+
  * [GHDL](http://ghdl.free.fr) 0.29+ for VHDL compilation and simulation
 
-Building VHDLLab requires JDK 6+ and [Maven](http://maven.apache.org) 2.2.1.
+Building VHDLLab requires JDK 6+.
 
 ### Natural Language
 A portion of codebase is in Croatian but most is in English. On the other hand,
