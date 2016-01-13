@@ -9,4 +9,4 @@ before_install:
   - cp configuration.properties-sample configuration.properties
 
 script:
-  - ./gradle build
+  - ./gradlew build
