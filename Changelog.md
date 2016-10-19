@@ -1,3 +1,6 @@
+# 2.6.8 [2016-10-19]
+ * Gradle build system instead of maven.
+
 # 2.6.7 [2015-01-18]
  * Unit tests can now be run on JDK8.
 
