@@ -27,10 +27,10 @@ subprojects {
     repositories {
         mavenLocal()
 
-        maven { url "http://repo.maven.apache.org/maven2" }
-        maven { url "http://maven.springframework.org/release/" }
+        maven { url "https://repo.maven.apache.org/maven2" }
+        maven { url "https://maven.springframework.org/release/" }
         maven { url "http://spring-rich-c.sourceforge.net/maven2repository" }
-        maven { url "http://repository.jboss.com/maven2/" }
+        maven { url "https://repository.jboss.com/maven2/" }
     }
 }
 
